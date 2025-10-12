@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'top.rymc'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+
+    implementation 'io.netty:netty-common:4.1.125.Final'
+    implementation 'io.netty:netty-handler:4.1.125.Final'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+}
