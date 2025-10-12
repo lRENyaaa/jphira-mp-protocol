@@ -16,6 +16,6 @@ public class FrameEncoder extends MessageToMessageEncoder<ByteBuf> {
 
         NettyPacketUtil.writeVarInt(lenBuf, length);
         out.add(lenBuf);
-        out.add(msg);
+        out.add(msg.retain());
     }
 }
