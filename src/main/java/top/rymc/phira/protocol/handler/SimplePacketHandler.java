@@ -10,7 +10,7 @@ import top.rymc.phira.protocol.packet.serverbound.*;
 @Getter
 public class SimplePacketHandler extends PacketHandler {
 
-    private final Channel channel;
+    protected final Channel channel;
 
     @Override
     public void handle(ServerBoundPingPacket packet) {
