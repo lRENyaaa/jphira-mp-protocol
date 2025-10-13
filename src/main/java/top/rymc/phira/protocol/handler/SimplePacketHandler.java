@@ -1,4 +1,4 @@
-package top.rymc.phira.protocol;
+package top.rymc.phira.protocol.handler;
 
 import io.netty.channel.Channel;
 import lombok.Getter;
