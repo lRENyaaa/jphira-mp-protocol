@@ -1,9 +1,7 @@
 package top.rymc.phira.protocol;
 
-import lombok.Getter;
 import top.rymc.phira.protocol.packet.serverbound.*;
 
-@Getter
 public abstract class PacketHandler {
 
     public abstract void handle(ServerBoundPingPacket packet);
