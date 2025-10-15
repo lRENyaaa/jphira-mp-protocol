@@ -2,8 +2,8 @@
 Java版本的 [phira-mp](https://github.com/TeamFlos/phira-mp) 服务端侧协议库，基于Netty实现
 
 ## ⚙️ 依赖
-
-jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用
+[![](https://jitpack.io/v/lRENyaaa/jphira-mp-protocol.svg)](https://jitpack.io/#lRENyaaa/jphira-mp-protocol)  
+jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用  
 
 ```xml
 <repository>
@@ -16,7 +16,7 @@ jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用
 <dependency>
     <groupId>com.github.lRENyaaa</groupId>
     <artifactId>jphira-mp-protocol</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
