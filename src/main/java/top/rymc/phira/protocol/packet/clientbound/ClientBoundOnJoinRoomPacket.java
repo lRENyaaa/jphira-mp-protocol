@@ -12,9 +12,11 @@ import top.rymc.phira.protocol.util.PacketWriter;
 public class ClientBoundOnJoinRoomPacket extends ClientBoundPacket {
 
     private final UserProfile userProfile;
+    private final boolean monitor;
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, userProfile);
+        PacketWriter.write(buf, monitor);
     }
 }
