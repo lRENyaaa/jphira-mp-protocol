@@ -62,7 +62,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
 
         int length;
         try {
-            length = NettyPacketUtil.readVarInt(in);
+            length = NettyPacketUtil.decodeVarInt(in);
         } catch (NeedMoreDataException e) {
             in.resetReaderIndex();
             return;
