@@ -1,6 +1,9 @@
 # jphira-mp-protocol
 Java版本的 [phira-mp](https://github.com/TeamFlos/phira-mp) 服务端侧协议库，基于Netty实现
 
+### 相关项目
+* [pyphira-mp](https://github.com/Evi233/pyphira-mp)
+
 ## ⚙️ 依赖
 [![](https://jitpack.io/v/lRENyaaa/jphira-mp-protocol.svg)](https://jitpack.io/#lRENyaaa/jphira-mp-protocol)  
 jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用  
