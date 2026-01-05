@@ -3,6 +3,7 @@ package top.rymc.phira.protocol.data;
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.codec.Encodeable;
+import top.rymc.phira.protocol.util.PacketWriter;
 
 @RequiredArgsConstructor
 public enum PacketResult implements Encodeable {
@@ -13,6 +14,6 @@ public enum PacketResult implements Encodeable {
 
     @Override
     public void encode(ByteBuf buf) {
-        buf.writeByte(code);
+        PacketWriter.writeByte(buf, code);
     }
 }

@@ -13,7 +13,7 @@ public class ServerBoundChatPacket extends ServerBoundPacket {
 
     @Override
     public void decode(ByteBuf buf) {
-        message = NettyPacketUtil.readString(buf, 200);
+        message = NettyPacketUtil.decodeString(buf, 200);
     }
 
     @Override

@@ -13,7 +13,7 @@ public class ServerBoundAuthenticatePacket extends ServerBoundPacket {
 
     @Override
     public void decode(ByteBuf buf) {
-        this.token = NettyPacketUtil.readString(buf, 32);
+        this.token = NettyPacketUtil.decodeString(buf, 32);
     }
 
     @Override

@@ -37,6 +37,10 @@ public class ServerChannelInitializer extends ChannelInitializer<Channel> {
 
         decoder.getClientProtocolVersion().whenComplete((version,throwable) -> {
             if (throwable != null) {
+                throwable.printStackTrace();
+                if (channel.isActive()) {
+                    channel.close();
+                }
                 return;
             }
 

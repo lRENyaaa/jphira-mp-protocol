@@ -10,10 +10,12 @@ import top.rymc.phira.protocol.util.NettyPacketUtil;
 public class ServerBoundJoinRoomPacket extends ServerBoundPacket {
 
     private String roomId;
+    private boolean monitor;
 
     @Override
     public void decode(ByteBuf buf) {
-        roomId = NettyPacketUtil.readString(buf, 20);
+        roomId = NettyPacketUtil.decodeString(buf, 20);
+        monitor = buf.readBoolean();
     }
 
     @Override

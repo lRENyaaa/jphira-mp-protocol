@@ -13,7 +13,7 @@ public class ServerBoundCreateRoomPacket extends ServerBoundPacket {
 
     @Override
     public void decode(ByteBuf buf) {
-        roomId = NettyPacketUtil.readString(buf, 20);
+        roomId = NettyPacketUtil.decodeString(buf, 20);
     }
 
     @Override

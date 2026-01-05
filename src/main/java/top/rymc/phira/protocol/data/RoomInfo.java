@@ -31,7 +31,7 @@ public class RoomInfo implements Encodeable {
         PacketWriter.write(buf, cycle);
         PacketWriter.write(buf, isHost);
         PacketWriter.write(buf, isReady);
-        PacketWriter.writeByte(buf, users.size() + monitors.size());
+        PacketWriter.writeVarInt(buf, users.size() + monitors.size());
         for (UserProfile user : users) {
             PacketWriter.write(buf, user);
             PacketWriter.write(buf, false);
