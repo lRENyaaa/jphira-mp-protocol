@@ -12,13 +12,27 @@ import top.rymc.phira.protocol.util.NettyPacketUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class FrameDecoder extends ByteToMessageDecoder {
 
     private static final Set<Integer> SUPPORTED_VERSIONS = Set.of(0x01);
-    private static final CorruptedFrameException BAD_PACKET_LENGTH = new CorruptedFrameException("Bad packet length");
 
     private HandleFunction currentHandler = this::clientVersionHandshakeHandle;
+
+    private final long timeout;
+    private final TimeUnit timeunit;
+
+    public FrameDecoder() {
+        this(5000, TimeUnit.MILLISECONDS);
+    }
+
+    public FrameDecoder(long timeout, TimeUnit timeunit) {
+        this.timeout = timeout;
+        this.timeunit = timeunit;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
@@ -32,6 +46,28 @@ public class FrameDecoder extends ByteToMessageDecoder {
     }
 
     private final CompletableFuture<Integer> clientProtocolVersionPromise = new CompletableFuture<>();
+    private ScheduledFuture<?> handshakeTimeout;
+
+    @Override
+    @SuppressWarnings("resource")
+    public void channelActive(ChannelHandlerContext ctx) {
+        handshakeTimeout = ctx.executor().schedule(() -> {
+            if (clientProtocolVersionPromise.isDone()) {
+                return;
+            }
+
+            clientProtocolVersionPromise.completeExceptionally(new TimeoutException("Handshake timeout: no data received"));
+            ctx.close();
+        }, timeout, timeunit);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        if (handshakeTimeout != null) {
+            handshakeTimeout.cancel(false);
+        }
+        super.channelInactive(ctx);
+    }
 
     public CompletableFuture<Integer> getClientProtocolVersion() {
         return clientProtocolVersionPromise;
@@ -47,6 +83,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
             ReferenceCountUtil.safeRelease(in);
         }
 
+        handshakeTimeout.cancel(false);
         clientProtocolVersionPromise.complete(clientProtocolVersion);
 
         currentHandler = this::handle;
@@ -75,7 +112,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
         if (length < 0) {
             ctx.close();
             ReferenceCountUtil.safeRelease(in);
-            throw BAD_PACKET_LENGTH;
+            throw new CorruptedFrameException("Bad packet length");
         }
 
         if (in.readableBytes() < length) {
