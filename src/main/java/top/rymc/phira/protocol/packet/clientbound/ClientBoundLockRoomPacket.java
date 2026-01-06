@@ -22,7 +22,8 @@ public abstract class ClientBoundLockRoomPacket extends ClientBoundPacket {
 
     }
 
-    public static class OK extends ClientBoundLockRoomPacket {
+    @RequiredArgsConstructor
+    public static class Success extends ClientBoundLockRoomPacket {
 
         @Override
         public void encode(ByteBuf buf) {
