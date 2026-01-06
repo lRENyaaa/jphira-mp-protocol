@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 public class PacketRegistry {
 
-    private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> CLIENT_BOUND_PACKET_MAP = ServerBound.getPacketMap();
-    private static final Map<Class<? extends ClientBoundPacket>,Integer> SERVER_BOUND_PACKET_MAP = ClientBound.getPacketMap();
+    private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> SERVER_BOUND_PACKET_MAP = ServerBound.getPacketMap();
+    private static final Map<Class<? extends ClientBoundPacket>,Integer> CLIENT_BOUND_PACKET_MAP = ClientBound.getPacketMap();
 
     /**
      * Decodes a client-bound packet from the given ByteBuf.
@@ -44,7 +44,7 @@ public class PacketRegistry {
 
         int packetId = buf.readUnsignedByte();
 
-        Function<ByteBuf, ? extends ServerBoundPacket> decoder = CLIENT_BOUND_PACKET_MAP.get(packetId);
+        Function<ByteBuf, ? extends ServerBoundPacket> decoder = SERVER_BOUND_PACKET_MAP.get(packetId);
         if (decoder == null) {
             throw new CodecException("Unknown ServerBound packet id: " + packetId);
         }
@@ -65,7 +65,7 @@ public class PacketRegistry {
 
         ByteBuf buf = bufSupplier.get();
         try {
-            int packetId = getServerBoundPacketId(packet);
+            int packetId = getClientBoundPacketId(packet);
 
             buf.writeByte(packetId);
             packet.encode(buf);
@@ -89,18 +89,18 @@ public class PacketRegistry {
         return encode(packet, Unpooled::buffer);
     }
 
-    private static final Map<Class<? extends ClientBoundPacket>, Integer> SERVER_BOUND_PACKET_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends ClientBoundPacket>, Integer> CLIENT_BOUND_PACKET_CACHE = new ConcurrentHashMap<>();
 
-    private static int getServerBoundPacketId(ClientBoundPacket packet) throws CodecException {
+    private static int getClientBoundPacketId(ClientBoundPacket packet) throws CodecException {
         Class<? extends ClientBoundPacket> clazz = packet.getClass();
 
-        Integer id = SERVER_BOUND_PACKET_CACHE.get(clazz);
+        Integer id = CLIENT_BOUND_PACKET_CACHE.get(clazz);
         if (id != null) return id;
 
-        for (Map.Entry<Class<? extends ClientBoundPacket>, Integer> entry : SERVER_BOUND_PACKET_MAP.entrySet()) {
+        for (Map.Entry<Class<? extends ClientBoundPacket>, Integer> entry : CLIENT_BOUND_PACKET_MAP.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
                 id = entry.getValue();
-                SERVER_BOUND_PACKET_CACHE.put(clazz, id);
+                CLIENT_BOUND_PACKET_CACHE.put(clazz, id);
                 return id;
             }
         }

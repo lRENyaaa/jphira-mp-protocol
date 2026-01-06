@@ -18,9 +18,11 @@ public class RoomInfo implements Encodeable {
     private final boolean cycle;
     private final boolean isHost;
     private final boolean isReady;
-    private final List<UserProfile> users;
-    private final List<UserProfile> monitors;
+    private final List<FullUserProfile> users;
 
+    public RoomInfo(String roomId, GameState state, boolean live, boolean locked, boolean cycle, boolean isHost, boolean isReady, List<UserProfile> users, List<UserProfile> monitors) {
+        this(roomId, state, live, locked, cycle, isHost, isReady, FullUserProfile.fromLists(users, monitors));
+    }
 
     @Override
     public void encode(ByteBuf buf) {
@@ -31,14 +33,6 @@ public class RoomInfo implements Encodeable {
         PacketWriter.write(buf, cycle);
         PacketWriter.write(buf, isHost);
         PacketWriter.write(buf, isReady);
-        PacketWriter.writeVarInt(buf, users.size() + monitors.size());
-        for (UserProfile user : users) {
-            PacketWriter.write(buf, user);
-            PacketWriter.write(buf, false);
-        }
-        for (UserProfile monitor : monitors) {
-            PacketWriter.write(buf, monitor);
-            PacketWriter.write(buf, true);
-        }
+        PacketWriter.write(buf, users);
     }
 }

@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.DecoderException;
 import top.rymc.phira.protocol.codec.Decodeable;
 import top.rymc.phira.protocol.codec.Encodeable;
-import top.rymc.phira.protocol.exception.BadVarintException;
+import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
 
 import java.nio.charset.StandardCharsets;
@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class NettyPacketUtil {
+
+    private NettyPacketUtil() {}
 
     private static final int MAXIMUM_VARINT_SIZE = 5;
 
@@ -49,7 +51,7 @@ public class NettyPacketUtil {
             shift += 7;
         }
 
-        throw new BadVarintException();
+        throw new BadVarIntException();
     }
 
     public static void encodeVarInt(ByteBuf buf, int value) {

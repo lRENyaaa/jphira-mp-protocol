@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.CorruptedFrameException;
 import io.netty.util.ReferenceCountUtil;
-import top.rymc.phira.protocol.exception.BadVarintException;
+import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 
@@ -103,7 +103,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
         } catch (NeedMoreDataException e) {
             in.resetReaderIndex();
             return;
-        } catch (BadVarintException e) {
+        } catch (BadVarIntException e) {
             ctx.close();
             ReferenceCountUtil.safeRelease(in);
             return;

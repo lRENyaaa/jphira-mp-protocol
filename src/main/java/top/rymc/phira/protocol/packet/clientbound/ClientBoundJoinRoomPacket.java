@@ -2,6 +2,7 @@ package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.data.FullUserProfile;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.data.UserProfile;
 import top.rymc.phira.protocol.data.state.GameState;
@@ -30,23 +31,18 @@ public abstract class ClientBoundJoinRoomPacket extends ClientBoundPacket {
     public static class Success extends ClientBoundJoinRoomPacket {
 
         private final GameState gameState;
-        private final List<UserProfile> users;
-        private final List<UserProfile> monitors;
+        private final List<FullUserProfile> users;
         private final boolean isLive;
+
+        public Success(GameState gameState, List<UserProfile> users, List<UserProfile> monitors, boolean isLive) {
+            this(gameState, FullUserProfile.fromLists(users, monitors), isLive);
+        }
 
         @Override
         public void encode(ByteBuf buf) {
             PacketWriter.write(buf, PacketResult.SUCCESS);
             PacketWriter.write(buf, gameState);
-            PacketWriter.writeByte(buf, users.size() + monitors.size());
-            for (UserProfile user : users) {
-                PacketWriter.write(buf, user);
-                PacketWriter.write(buf, false);
-            }
-            for (UserProfile monitor : monitors) {
-                PacketWriter.write(buf, monitor);
-                PacketWriter.write(buf, true);
-            }
+            PacketWriter.write(buf, users);
             PacketWriter.write(buf, isLive);
         }
     }

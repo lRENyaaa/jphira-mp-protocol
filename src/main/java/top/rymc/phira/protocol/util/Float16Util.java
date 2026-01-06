@@ -2,6 +2,8 @@ package top.rymc.phira.protocol.util;
 
 public class Float16Util {
 
+    private Float16Util() {}
+
     /**
      * The offset to shift by to obtain the sign bit.
      */
