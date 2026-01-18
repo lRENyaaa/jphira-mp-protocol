@@ -1,6 +1,7 @@
 package top.rymc.phira.protocol.data;
 
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.PacketWriter;
@@ -9,10 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Getter
 public class FullUserProfile implements Encodeable {
 
     private final UserProfile userProfile;
     private final boolean monitor;
+
+    public FullUserProfile(int userId, String userName, boolean monitor) {
+        this.userProfile = new UserProfile(userId, userName);
+        this.monitor = monitor;
+    }
+
+    public int getUserId() {
+        return userProfile.getUserId();
+    }
+
+    public String getUserName() {
+        return userProfile.getUserName();
+    }
 
     @Override
     public void encode(ByteBuf buf) {

@@ -33,6 +33,15 @@ public class RoomInfo implements Encodeable {
         PacketWriter.write(buf, cycle);
         PacketWriter.write(buf, isHost);
         PacketWriter.write(buf, isReady);
-        PacketWriter.write(buf, users);
+
+        // Here in the protocol, it's a Map<Integer, FullUserProfile>.
+        // The Integer represents the user id in FullUserProfile.
+        // Frankly, this is redundant data transmission, utterly pointless and only increases implementation costs.
+        int size = users.size();
+        PacketWriter.writeVarInt(buf, size);
+        for (FullUserProfile user : users) {
+            PacketWriter.write(buf, user.getUserId());
+            PacketWriter.write(buf, user);
+        }
     }
 }

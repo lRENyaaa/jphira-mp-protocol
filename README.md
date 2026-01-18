@@ -19,7 +19,7 @@ jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用
 <dependency>
     <groupId>com.github.lRENyaaa</groupId>
     <artifactId>jphira-mp-protocol</artifactId>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
