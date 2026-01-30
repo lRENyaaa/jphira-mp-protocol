@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.CorruptedFrameException;
+import io.netty.util.ByteProcessor;
 import io.netty.util.ReferenceCountUtil;
 import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
@@ -95,6 +96,14 @@ public class FrameDecoder extends ByteToMessageDecoder {
     }
 
     private void handle(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        int skip = in.forEachByte(ByteProcessor.FIND_NON_NUL);
+
+        if (skip < 0) {
+            in.clear();
+            return;
+        }
+
+        in.readerIndex(skip);
         in.markReaderIndex();
 
         int length;
