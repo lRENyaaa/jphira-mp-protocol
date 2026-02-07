@@ -5,7 +5,7 @@ import top.rymc.phira.protocol.packet.ClientBoundPacket;
 
 public class ClientBoundPongPacket extends ClientBoundPacket {
 
-    public static final ClientBoundPacket INSTANCE = new ClientBoundPongPacket();
+    public static final ClientBoundPongPacket INSTANCE = new ClientBoundPongPacket();
 
     private ClientBoundPongPacket() {
         // Singleton instance
@@ -13,6 +13,6 @@ public class ClientBoundPongPacket extends ClientBoundPacket {
 
     @Override
     public void encode(ByteBuf buf) {
-        // Just pong, do nothing here
+        // Do nothing here
     }
 }

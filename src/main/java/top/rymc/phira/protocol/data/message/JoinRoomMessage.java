@@ -2,6 +2,7 @@ package top.rymc.phira.protocol.data.message;
 
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 @RequiredArgsConstructor
@@ -10,15 +11,18 @@ public class JoinRoomMessage extends Message {
     private final int user;
     private final String name;
 
+    public static JoinRoomMessage decode(ByteBuf buf) {
+        return new JoinRoomMessage(
+                buf.readIntLE(),
+                NettyPacketUtil.decodeString(buf)
+        );
+    }
+
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
+        super.encode(buf);
         PacketWriter.write(buf, user);
         PacketWriter.write(buf, name);
     }
 
-    @Override
-    public int getMessageId() {
-        return 0x02;
-    }
 }

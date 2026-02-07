@@ -9,14 +9,14 @@ public class CycleRoomMessage extends Message {
 
     private final boolean cycle;
 
-    @Override
-    public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
-        PacketWriter.write(buf, cycle);
+    public static CycleRoomMessage decode(ByteBuf buf) {
+        return new CycleRoomMessage(buf.readBoolean());
     }
 
     @Override
-    public int getMessageId() {
-        return 0x0F;
+    public void encode(ByteBuf buf) {
+        super.encode(buf);
+        PacketWriter.write(buf, cycle);
     }
+
 }

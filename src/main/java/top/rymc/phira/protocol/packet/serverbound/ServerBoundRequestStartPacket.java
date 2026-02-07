@@ -13,8 +13,8 @@ public class ServerBoundRequestStartPacket extends ServerBoundPacket {
     }
 
     @Override
-    public void decode(ByteBuf buf) {
-        // No data to decode for this packet
+    public void encode(ByteBuf buf) {
+        // Do nothing here
     }
 
     @Override

@@ -23,6 +23,10 @@ public class ClientBoundOnJoinRoomPacket extends ClientBoundPacket {
         return create(new FullUserProfile(userProfile, isMonitor));
     }
 
+    public static ClientBoundOnJoinRoomPacket decode(ByteBuf buf) {
+        return new ClientBoundOnJoinRoomPacket(FullUserProfile.decode(buf));
+    }
+
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, userProfile);

@@ -9,14 +9,14 @@ public class CancelGameMessage extends Message {
 
     private final int user;
 
-    @Override
-    public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
-        PacketWriter.write(buf, user);
+    public static CancelGameMessage decode(ByteBuf buf) {
+        return new CancelGameMessage(buf.readIntLE());
     }
 
     @Override
-    public int getMessageId() {
-        return 0x09;
+    public void encode(ByteBuf buf) {
+        super.encode(buf);
+        PacketWriter.write(buf, user);
     }
+
 }

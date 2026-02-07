@@ -5,7 +5,6 @@ import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PacketResult<T extends Encodeable> implements Encodeable {

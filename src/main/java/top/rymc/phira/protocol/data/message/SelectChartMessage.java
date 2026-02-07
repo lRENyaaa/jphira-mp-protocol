@@ -2,6 +2,7 @@ package top.rymc.phira.protocol.data.message;
 
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 @RequiredArgsConstructor
@@ -11,16 +12,20 @@ public class SelectChartMessage extends Message {
     private final String name;
     private final int id;
 
+    public static SelectChartMessage decode(ByteBuf buf) {
+        return new SelectChartMessage(
+                buf.readIntLE(),
+                NettyPacketUtil.decodeString(buf),
+                buf.readIntLE()
+        );
+    }
+
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
+        super.encode(buf);
         PacketWriter.write(buf, user);
         PacketWriter.write(buf, name);
         PacketWriter.write(buf, id);
     }
 
-    @Override
-    public int getMessageId() {
-        return 0x05;
-    }
 }

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.monitor.touch.TouchFrame;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public class ClientBoundTouchesPacket extends ClientBoundPacket {
 
     public static ClientBoundTouchesPacket create(int id, List<TouchFrame> frames) {
         return new ClientBoundTouchesPacket(id, frames);
+    }
+
+    public static ClientBoundTouchesPacket decode(ByteBuf buf) {
+        return new ClientBoundTouchesPacket(
+                buf.readIntLE(),
+                NettyPacketUtil.decodeList(buf, TouchFrame::decode)
+        );
     }
 
     @Override

@@ -9,14 +9,14 @@ public class CancelReadyMessage extends Message {
 
     private final int user;
 
-    @Override
-    public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
-        PacketWriter.write(buf, user);
+    public static CancelReadyMessage decode(ByteBuf buf) {
+        return new CancelReadyMessage(buf.readIntLE());
     }
 
     @Override
-    public int getMessageId() {
-        return 0x08;
+    public void encode(ByteBuf buf) {
+        super.encode(buf);
+        PacketWriter.write(buf, user);
     }
+
 }

@@ -4,7 +4,9 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.monitor.judge.JudgeEvent;
+import top.rymc.phira.protocol.data.monitor.touch.TouchFrame;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 import java.util.List;
@@ -17,6 +19,13 @@ public class ClientBoundJudgesPacket extends ClientBoundPacket {
 
     public static ClientBoundJudgesPacket create(int id, List<JudgeEvent> judges) {
         return new ClientBoundJudgesPacket(id, judges);
+    }
+
+    public static ClientBoundJudgesPacket decode(ByteBuf buf) {
+        return new ClientBoundJudgesPacket(
+                buf.readIntLE(),
+                NettyPacketUtil.decodeList(buf, JudgeEvent::decode)
+        );
     }
 
     @Override

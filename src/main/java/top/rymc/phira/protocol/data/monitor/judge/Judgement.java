@@ -17,6 +17,10 @@ public enum Judgement implements Encodeable {
 
     private final int code;
 
+    public static Judgement decode(ByteBuf buf) {
+        return get(buf.readByte());
+    }
+
     public static Judgement get(int code) {
         for (Judgement judgement : Judgement.values()) {
             if (judgement.code != code) {

@@ -2,7 +2,7 @@ package top.rymc.phira.protocol.data.monitor.touch;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import top.rymc.phira.protocol.codec.Decodeable;
+import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
@@ -10,24 +10,17 @@ import top.rymc.phira.protocol.util.PacketWriter;
 import java.util.List;
 
 @Getter
-public class TouchFrame implements Encodeable, Decodeable {
+@RequiredArgsConstructor
+public class TouchFrame implements Encodeable {
 
-    private float time;
-    private List<TouchPoint> points;
+    private final float time;
+    private final List<TouchPoint> points;
 
-    public TouchFrame() {
-        // Empty constructor
-    }
-
-    public TouchFrame(float time, List<TouchPoint> points) {
-        this.time = time;
-        this.points = points;
-    }
-
-    @Override
-    public void decode(ByteBuf buf) {
-        time = buf.readFloatLE();
-        points = NettyPacketUtil.decodeList(buf, TouchPoint::new);
+    public static TouchFrame decode(ByteBuf buf) {
+        return new TouchFrame(
+                buf.readFloatLE(),
+                NettyPacketUtil.decodeList(buf, TouchPoint::decode)
+        );
     }
 
     @Override

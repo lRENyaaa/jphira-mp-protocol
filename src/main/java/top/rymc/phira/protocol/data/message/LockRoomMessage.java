@@ -9,14 +9,13 @@ public class LockRoomMessage extends Message {
 
     private final boolean lock;
 
-    @Override
-    public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
-        PacketWriter.write(buf, lock);
+    public static LockRoomMessage decode(ByteBuf buf) {
+        return new LockRoomMessage(buf.readBoolean());
     }
 
     @Override
-    public int getMessageId() {
-        return 0x0E;
+    public void encode(ByteBuf buf) {
+        super.encode(buf);
+        PacketWriter.write(buf, lock);
     }
 }

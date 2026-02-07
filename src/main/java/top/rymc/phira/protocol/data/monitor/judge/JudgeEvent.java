@@ -1,36 +1,28 @@
 package top.rymc.phira.protocol.data.monitor.judge;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.Getter;
-import top.rymc.phira.protocol.codec.Decodeable;
+import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 @Getter
-public class JudgeEvent implements Encodeable, Decodeable {
+@RequiredArgsConstructor
+public class JudgeEvent implements Encodeable {
 
-    private float time;
-    private int lineId;
-    private int noteId;
-    private Judgement judgement;
+    private final float time;
+    private final int lineId;
+    private final int noteId;
+    private final Judgement judgement;
 
-    public JudgeEvent() {
-        // Empty constructor
-    }
-
-    public JudgeEvent(float time, int lineId, int noteId, Judgement judgement) {
-        this.time = time;
-        this.lineId = lineId;
-        this.noteId = noteId;
-        this.judgement = judgement;
-    }
-
-    @Override
-    public void decode(ByteBuf buf) {
-        this.time = buf.readFloatLE();
-        this.lineId = buf.readIntLE();
-        this.noteId = buf.readIntLE();
-        this.judgement = Judgement.get(buf.readByte());
+    public static JudgeEvent decode(ByteBuf buf) {
+        return new JudgeEvent(
+                buf.readFloatLE(),
+                buf.readIntLE(),
+                buf.readIntLE(),
+                Judgement.decode(buf)
+        );
     }
 
     @Override

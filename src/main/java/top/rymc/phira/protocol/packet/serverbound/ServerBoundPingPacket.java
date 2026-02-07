@@ -13,8 +13,8 @@ public class ServerBoundPingPacket extends ServerBoundPacket {
     }
 
     @Override
-    public void decode(ByteBuf buf) {
-        // Just ping, do nothing here
+    public void encode(ByteBuf buf) {
+        // Do nothing here
     }
 
     @Override

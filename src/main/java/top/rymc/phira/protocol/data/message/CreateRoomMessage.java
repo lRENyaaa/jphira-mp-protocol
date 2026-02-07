@@ -9,14 +9,14 @@ public class CreateRoomMessage extends Message {
 
     private final int user;
 
-    @Override
-    public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
-        PacketWriter.write(buf, user);
+    public static CreateRoomMessage decode(ByteBuf buf) {
+        return new CreateRoomMessage(buf.readIntLE());
     }
 
     @Override
-    public int getMessageId() {
-        return 0x01;
+    public void encode(ByteBuf buf) {
+        super.encode(buf);
+        PacketWriter.write(buf, user);
     }
+
 }

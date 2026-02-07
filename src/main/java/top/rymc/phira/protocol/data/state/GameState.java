@@ -2,6 +2,7 @@ package top.rymc.phira.protocol.data.state;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
+import io.netty.util.collection.IntObjectMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import top.rymc.phira.protocol.codec.Encodeable;
@@ -53,17 +54,17 @@ public abstract sealed class GameState implements Encodeable permits Playing, Wa
         }
 
         private static Map<Integer, Function<ByteBuf,? extends GameState>> getDecoderMap() {
-            return Arrays.stream(values()).collect(Collectors.toMap(
+            return Map.copyOf(Arrays.stream(values()).collect(Collectors.toMap(
                     Registry::getId,
                     stateEnum -> buf -> stateEnum.getDecoder().apply(buf)
-            ));
+            )));
         }
 
         private static Map<Class<? extends GameState>,Integer> getEncoderMap() {
-            return Arrays.stream(values()).collect(Collectors.toMap(
+            return Map.copyOf(Arrays.stream(values()).collect(Collectors.toMap(
                     Registry::getClazz,
                     Registry::getId
-            ));
+            )));
         }
     }
 }

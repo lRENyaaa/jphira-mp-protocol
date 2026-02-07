@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 public class PacketRegistry {
 
-    private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> SERVER_BOUND_PACKET_MAP = ServerBound.getPacketMap();
-    private static final Map<Class<? extends ClientBoundPacket>,Integer> CLIENT_BOUND_PACKET_MAP = ClientBound.getPacketMap();
+    private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> SERVER_BOUND_PACKET_MAP = ServerBound.getDecoderMap();
+    private static final Map<Class<? extends ClientBoundPacket>,Integer> CLIENT_BOUND_PACKET_MAP = ClientBound.getEncoderMap();
 
     /**
      * Decodes a client-bound packet from the given ByteBuf.
@@ -111,86 +111,84 @@ public class PacketRegistry {
 
     @Getter
     public enum ServerBound {
-        Ping(0x00, ServerBoundPingPacket.class, () -> ServerBoundPingPacket.INSTANCE),
+        Ping(0x00, ServerBoundPingPacket.class, (buf) -> ServerBoundPingPacket.INSTANCE),
 
-        Authenticate(0x01, ServerBoundAuthenticatePacket.class, ServerBoundAuthenticatePacket::new),
-        Chat(0x02, ServerBoundChatPacket.class, ServerBoundChatPacket::new),
+        Authenticate(0x01, ServerBoundAuthenticatePacket.class, ServerBoundAuthenticatePacket::decode),
+        Chat(0x02, ServerBoundChatPacket.class, ServerBoundChatPacket::decode),
 
-        Touches(0x03, ServerBoundTouchesPacket.class, ServerBoundTouchesPacket::new),
-        Judges(0x04, ServerBoundJudgesPacket.class, ServerBoundJudgesPacket::new),
+        Touches(0x03, ServerBoundTouchesPacket.class, ServerBoundTouchesPacket::decode),
+        Judges(0x04, ServerBoundJudgesPacket.class, ServerBoundJudgesPacket::decode),
 
-        CreateRoom(0x05, ServerBoundCreateRoomPacket.class, ServerBoundCreateRoomPacket::new),
-        JoinRoom(0x06, ServerBoundJoinRoomPacket.class, ServerBoundJoinRoomPacket::new),
-        LeaveRoom(0x07, ServerBoundLeaveRoomPacket.class, () -> ServerBoundLeaveRoomPacket.INSTANCE),
-        LockRoom(0x08, ServerBoundLockRoomPacket.class, ServerBoundLockRoomPacket::new),
-        CycleRoom(0x09, ServerBoundCycleRoomPacket.class, ServerBoundCycleRoomPacket::new),
+        CreateRoom(0x05, ServerBoundCreateRoomPacket.class, ServerBoundCreateRoomPacket::decode),
+        JoinRoom(0x06, ServerBoundJoinRoomPacket.class, ServerBoundJoinRoomPacket::decode),
+        LeaveRoom(0x07, ServerBoundLeaveRoomPacket.class, (buf) -> ServerBoundLeaveRoomPacket.INSTANCE),
+        LockRoom(0x08, ServerBoundLockRoomPacket.class, ServerBoundLockRoomPacket::decode),
+        CycleRoom(0x09, ServerBoundCycleRoomPacket.class, ServerBoundCycleRoomPacket::decode),
 
-        SelectChart(0x0A, ServerBoundSelectChartPacket.class, ServerBoundSelectChartPacket::new),
-        RequestStart(0x0B, ServerBoundRequestStartPacket.class, () -> ServerBoundRequestStartPacket.INSTANCE),
-        Ready(0x0C, ServerBoundReadyPacket.class, () -> ServerBoundReadyPacket.INSTANCE),
-        CancelReady(0x0D, ServerBoundCancelReadyPacket.class, () -> ServerBoundCancelReadyPacket.INSTANCE),
-        Played(0x0E, ServerBoundPlayedPacket.class, ServerBoundPlayedPacket::new),
-        Abort(0x0F, ServerBoundAbortPacket.class, () -> ServerBoundAbortPacket.INSTANCE),;
+        SelectChart(0x0A, ServerBoundSelectChartPacket.class, ServerBoundSelectChartPacket::decode),
+        RequestStart(0x0B, ServerBoundRequestStartPacket.class, (buf) -> ServerBoundRequestStartPacket.INSTANCE),
+        Ready(0x0C, ServerBoundReadyPacket.class, (buf) -> ServerBoundReadyPacket.INSTANCE),
+        CancelReady(0x0D, ServerBoundCancelReadyPacket.class, (buf) -> ServerBoundCancelReadyPacket.INSTANCE),
+        Played(0x0E, ServerBoundPlayedPacket.class, ServerBoundPlayedPacket::decode),
+        Abort(0x0F, ServerBoundAbortPacket.class, (buf) -> ServerBoundAbortPacket.INSTANCE),;
 
         private final int id;
         private final Class<? extends ServerBoundPacket> clazz;
-        private final Supplier<? extends ServerBoundPacket> constructor;
+        private final Function<ByteBuf,? extends ServerBoundPacket> decoder;
 
-        <T extends ServerBoundPacket> ServerBound(int id, Class<T> clazz, Supplier<T> constructor) {
+        <T extends ServerBoundPacket> ServerBound(int id, Class<T> clazz, Function<ByteBuf,T> decoder) {
             this.id = id;
             this.clazz = clazz;
-            this.constructor = constructor;
+            this.decoder = decoder;
         }
 
-        private static Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> getPacketMap() {
+        private static Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> getDecoderMap() {
             return Arrays.stream(values()).collect(Collectors.toMap(
                     ServerBound::getId,
-                    packetEnum -> buf -> {
-                        ServerBoundPacket packet = packetEnum.getConstructor().get();
-                        packet.decode(buf);
-                        return packet;
-                    })
+                    packetEnum -> buf -> packetEnum.getDecoder().apply(buf))
             );
         }
     }
 
     @Getter
     public enum ClientBound {
-        Pong(0x00, ClientBoundPongPacket.class),
+        Pong(0x00, ClientBoundPongPacket.class, (buf) -> ClientBoundPongPacket.INSTANCE),
 
-        Authenticate(0x01, ClientBoundAuthenticatePacket.class),
-        Chat(0x02, ClientBoundChatPacket.class),
+        Authenticate(0x01, ClientBoundAuthenticatePacket.class, ClientBoundAuthenticatePacket::decode),
+        Chat(0x02, ClientBoundChatPacket.class, ClientBoundChatPacket::decode),
 
-        Touches(0x03, ClientBoundTouchesPacket.class),
-        Judges(0x04, ClientBoundJudgesPacket.class),
+        Touches(0x03, ClientBoundTouchesPacket.class, ClientBoundTouchesPacket::decode),
+        Judges(0x04, ClientBoundJudgesPacket.class, ClientBoundJudgesPacket::decode),
 
-        Message(0x05, ClientBoundMessagePacket.class),
-        ChangeState(0x06, ClientBoundChangeStatePacket.class),
-        ChangeHost(0x07, ClientBoundChangeHostPacket.class),
+        Message(0x05, ClientBoundMessagePacket.class, ClientBoundMessagePacket::decode),
+        ChangeState(0x06, ClientBoundChangeStatePacket.class, ClientBoundChangeStatePacket::decode),
+        ChangeHost(0x07, ClientBoundChangeHostPacket.class, ClientBoundChangeHostPacket::decode),
 
-        CreateRoom(0x08, ClientBoundCreateRoomPacket.class),
-        JoinRoom(0x09, ClientBoundJoinRoomPacket.class),
-        OnJoinRoom(0x0A, ClientBoundOnJoinRoomPacket.class),
-        LeaveRoom(0x0B, ClientBoundLeaveRoomPacket.class),
-        LockRoom(0x0C, ClientBoundLockRoomPacket.class),
-        CycleRoom(0x0D, ClientBoundCycleRoomPacket.class),
+        CreateRoom(0x08, ClientBoundCreateRoomPacket.class, ClientBoundCreateRoomPacket::decode),
+        JoinRoom(0x09, ClientBoundJoinRoomPacket.class, ClientBoundJoinRoomPacket::decode),
+        OnJoinRoom(0x0A, ClientBoundOnJoinRoomPacket.class, ClientBoundOnJoinRoomPacket::decode),
+        LeaveRoom(0x0B, ClientBoundLeaveRoomPacket.class, ClientBoundLeaveRoomPacket::decode),
+        LockRoom(0x0C, ClientBoundLockRoomPacket.class, ClientBoundLockRoomPacket::decode),
+        CycleRoom(0x0D, ClientBoundCycleRoomPacket.class, ClientBoundCycleRoomPacket::decode),
 
-        SelectChart(0x0E, ClientBoundSelectChartPacket.class),
-        RequestStart(0x0F, ClientBoundRequestStartPacket.class),
-        Ready(0x10, ClientBoundReadyPacket.class),
-        CancelReady(0x11, ClientBoundCancelReadyPacket.class),
-        Played(0x12, ClientBoundPlayedPacket.class),
-        Abort(0x13, ClientBoundAbortPacket.class);
+        SelectChart(0x0E, ClientBoundSelectChartPacket.class, ClientBoundSelectChartPacket::decode),
+        RequestStart(0x0F, ClientBoundRequestStartPacket.class, ClientBoundRequestStartPacket::decode),
+        Ready(0x10, ClientBoundReadyPacket.class, ClientBoundReadyPacket::decode),
+        CancelReady(0x11, ClientBoundCancelReadyPacket.class, ClientBoundCancelReadyPacket::decode),
+        Played(0x12, ClientBoundPlayedPacket.class, ClientBoundPlayedPacket::decode),
+        Abort(0x13, ClientBoundAbortPacket.class, ClientBoundAbortPacket::decode);
 
         private final int id;
         private final Class<? extends ClientBoundPacket> clazz;
+        private final Function<ByteBuf,? extends ClientBoundPacket> decoder;
 
-        <T extends ClientBoundPacket> ClientBound(int id, Class<T> clazz) {
+        <T extends ClientBoundPacket> ClientBound(int id, Class<T> clazz, Function<ByteBuf,T> decoder) {
             this.id = id;
             this.clazz = clazz;
+            this.decoder = decoder;
         }
 
-        private static Map<Class<? extends ClientBoundPacket>,Integer> getPacketMap() {
+        private static Map<Class<? extends ClientBoundPacket>,Integer> getEncoderMap() {
             return Arrays.stream(values()).collect(Collectors.toMap(
                     ClientBound::getClazz,
                     ClientBound::getId

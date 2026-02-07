@@ -12,17 +12,22 @@ public class PlayedMessage extends Message {
     private final float accuracy;
     private final boolean fullCombo;
 
+    public static PlayedMessage decode(ByteBuf buf) {
+        return new PlayedMessage(
+                buf.readIntLE(),
+                buf.readIntLE(),
+                buf.readFloatLE(),
+                buf.readBoolean()
+        );
+    }
+
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, getMessageId());
+        super.encode(buf);
         PacketWriter.write(buf, user);
         PacketWriter.write(buf, score);
         PacketWriter.write(buf, accuracy);
         PacketWriter.write(buf, fullCombo);
     }
 
-    @Override
-    public int getMessageId() {
-        return 0x0B;
-    }
 }

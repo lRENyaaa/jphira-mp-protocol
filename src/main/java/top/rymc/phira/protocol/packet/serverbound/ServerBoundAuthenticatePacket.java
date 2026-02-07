@@ -1,19 +1,27 @@
 package top.rymc.phira.protocol.packet.serverbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.handler.PacketHandler;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
+import top.rymc.phira.protocol.util.PacketWriter;
 
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerBoundAuthenticatePacket extends ServerBoundPacket {
 
-    private String token;
+    private final String token;
+
+    public static ServerBoundAuthenticatePacket decode(ByteBuf buf) {
+        return new ServerBoundAuthenticatePacket(NettyPacketUtil.decodeString(buf, 32));
+    }
 
     @Override
-    public void decode(ByteBuf buf) {
-        this.token = NettyPacketUtil.decodeString(buf, 32);
+    public void encode(ByteBuf buf) {
+        PacketWriter.write(buf, token);
     }
 
     @Override
