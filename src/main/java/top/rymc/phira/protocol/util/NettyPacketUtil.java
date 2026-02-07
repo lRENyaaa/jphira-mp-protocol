@@ -5,12 +5,14 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.DecoderException;
 import top.rymc.phira.protocol.codec.Decodeable;
 import top.rymc.phira.protocol.codec.Encodeable;
+import top.rymc.phira.protocol.data.state.GameState;
 import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NettyPacketUtil {
@@ -84,6 +86,12 @@ public class NettyPacketUtil {
         buf.writeCharSequence(str, StandardCharsets.UTF_8);
     }
 
+    private static final int MAX_STRING_LENGTH = 131072;
+
+    public static String decodeString(ByteBuf buf) {
+        return decodeString(buf, MAX_STRING_LENGTH);
+    }
+
     public static String decodeString(ByteBuf buf, int maxLength) {
         int length = decodeVarInt(buf);
 
@@ -117,6 +125,15 @@ public class NettyPacketUtil {
             T decodeable = constructor.get();
             decodeable.decode(buf);
             list.add(decodeable);
+        }
+        return list;
+    }
+
+    public static <T extends Encodeable> List<T> decodeList(ByteBuf buf, Function<ByteBuf, T> decoder) {
+        int length = decodeVarInt(buf);
+        List<T> list = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            list.add(decoder.apply(buf));
         }
         return list;
     }

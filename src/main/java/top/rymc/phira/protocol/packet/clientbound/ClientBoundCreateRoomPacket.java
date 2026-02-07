@@ -1,32 +1,33 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.data.EncodeableVoid;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
-import top.rymc.phira.protocol.util.PacketWriter;
 
-public abstract class ClientBoundCreateRoomPacket extends ClientBoundPacket {
 
-    @RequiredArgsConstructor
-    public static class Failed extends ClientBoundCreateRoomPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientBoundCreateRoomPacket extends ClientBoundPacket {
 
-        private final String reason;
+    private final PacketResult<EncodeableVoid> result;
 
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.FAILED);
-            PacketWriter.write(buf, reason);
-        }
+    public static ClientBoundCreateRoomPacket success() {
+        return new ClientBoundCreateRoomPacket(PacketResult.success(null));
     }
 
-    @RequiredArgsConstructor
-    public static class Success extends ClientBoundCreateRoomPacket {
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.SUCCESS);
-        }
-
+    public static ClientBoundCreateRoomPacket failed(String failedMessage) {
+        return new ClientBoundCreateRoomPacket(PacketResult.failed(failedMessage));
     }
+
+    public static ClientBoundCreateRoomPacket decode(ByteBuf buf) {
+        return new ClientBoundCreateRoomPacket(PacketResult.decodeVoid(buf));
+    }
+
+    @Override
+    public void encode(ByteBuf buf) {
+        result.encode(buf);
+    }
+
 }

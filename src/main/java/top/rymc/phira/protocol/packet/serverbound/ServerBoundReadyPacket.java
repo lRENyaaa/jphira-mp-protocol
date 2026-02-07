@@ -6,6 +6,12 @@ import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 public class ServerBoundReadyPacket extends ServerBoundPacket {
 
+    public static ServerBoundReadyPacket INSTANCE = new ServerBoundReadyPacket();
+
+    private ServerBoundReadyPacket() {
+        // Singleton instance
+    }
+    
     @Override
     public void decode(ByteBuf buf) {
         // No data to decode for this packet

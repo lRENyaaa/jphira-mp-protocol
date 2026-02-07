@@ -1,31 +1,32 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.data.EncodeableVoid;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
-import top.rymc.phira.protocol.util.PacketWriter;
 
-public abstract class ClientBoundPlayedPacket extends ClientBoundPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientBoundPlayedPacket extends ClientBoundPacket {
 
-    @RequiredArgsConstructor
-    public static class Failed extends ClientBoundPlayedPacket {
+    private final PacketResult<EncodeableVoid> result;
 
-        private final String reason;
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.FAILED);
-            PacketWriter.write(buf, reason);
-        }
+    public static ClientBoundPlayedPacket success() {
+        return new ClientBoundPlayedPacket(PacketResult.success(null));
     }
 
-    @RequiredArgsConstructor
-    public static class Success extends ClientBoundPlayedPacket {
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.SUCCESS);
-        }
+    public static ClientBoundPlayedPacket failed(String failedMessage) {
+        return new ClientBoundPlayedPacket(PacketResult.failed(failedMessage));
     }
+
+    public static ClientBoundPlayedPacket decode(ByteBuf buf) {
+        return new ClientBoundPlayedPacket(PacketResult.decodeVoid(buf));
+    }
+
+    @Override
+    public void encode(ByteBuf buf) {
+        result.encode(buf);
+    }
+
 }

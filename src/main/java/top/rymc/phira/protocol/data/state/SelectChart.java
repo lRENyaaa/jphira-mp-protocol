@@ -15,7 +15,7 @@ public final class SelectChart extends GameState {
 
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, 0x00);
+        super.encode(buf);
         boolean hasChartId = chartId != null;
         PacketWriter.write(buf, hasChartId);
 

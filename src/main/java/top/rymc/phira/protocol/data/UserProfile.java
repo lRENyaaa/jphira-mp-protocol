@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
 import top.rymc.phira.protocol.codec.Encodeable;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 import java.util.Objects;
@@ -23,6 +24,13 @@ public final class UserProfile implements Encodeable {
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, userId);
         PacketWriter.write(buf, userName);
+    }
+
+    public static UserProfile decode(ByteBuf buf) {
+        return new UserProfile(
+                buf.readIntLE(),
+                NettyPacketUtil.decodeString(buf)
+        );
     }
 
 }

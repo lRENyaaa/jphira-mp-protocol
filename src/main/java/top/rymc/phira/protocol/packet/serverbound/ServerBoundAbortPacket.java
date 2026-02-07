@@ -6,6 +6,12 @@ import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 public class ServerBoundAbortPacket extends ServerBoundPacket {
 
+    public static ServerBoundAbortPacket INSTANCE = new ServerBoundAbortPacket();
+
+    private ServerBoundAbortPacket() {
+        // Singleton instance
+    }
+    
     @Override
     public void decode(ByteBuf buf) {
         // No data to decode for this packet

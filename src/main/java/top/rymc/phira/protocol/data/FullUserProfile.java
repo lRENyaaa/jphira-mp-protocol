@@ -35,6 +35,13 @@ public class FullUserProfile implements Encodeable {
         PacketWriter.write(buf, monitor);
     }
 
+    public static FullUserProfile decode(ByteBuf buf) {
+        return new FullUserProfile(
+                UserProfile.decode(buf),
+                buf.readBoolean()
+        );
+    }
+
     public static List<FullUserProfile> fromLists(List<UserProfile> users, List<UserProfile> monitors) {
         List<FullUserProfile> fullProfiles = new ArrayList<>(users.size() + monitors.size());
         for (UserProfile user : users) {

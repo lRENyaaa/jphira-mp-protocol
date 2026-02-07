@@ -4,8 +4,10 @@ import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.data.state.GameState;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -43,5 +45,23 @@ public class RoomInfo implements Encodeable {
             PacketWriter.write(buf, user.getUserId());
             PacketWriter.write(buf, user);
         }
+    }
+
+    public static RoomInfo decode(ByteBuf buf) {
+        String roomId = NettyPacketUtil.decodeString(buf, 20);
+        GameState state = GameState.decode(buf);
+        boolean live = buf.readBoolean();
+        boolean locked = buf.readBoolean();
+        boolean cycle = buf.readBoolean();
+        boolean isHost = buf.readBoolean();
+        boolean isReady = buf.readBoolean();
+        List<FullUserProfile> users = new ArrayList<>();
+        int size = NettyPacketUtil.decodeVarInt(buf);
+        for (int i = 0; i < size; i++) {
+            buf.readIntLE(); // Drop
+            users.add(FullUserProfile.decode(buf));
+        }
+
+        return new RoomInfo(roomId, state, live, locked, cycle, isHost, isReady, users);
     }
 }

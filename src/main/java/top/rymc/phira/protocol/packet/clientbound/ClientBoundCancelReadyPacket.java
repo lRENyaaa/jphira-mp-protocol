@@ -1,31 +1,33 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.codec.Encodeable;
+import top.rymc.phira.protocol.data.EncodeableVoid;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
-public abstract class ClientBoundCancelReadyPacket extends ClientBoundPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientBoundCancelReadyPacket extends ClientBoundPacket {
 
-    @RequiredArgsConstructor
-    public static class Failed extends ClientBoundCancelReadyPacket {
+    private final PacketResult<EncodeableVoid> result;
 
-        private final String reason;
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.FAILED);
-            PacketWriter.write(buf, reason);
-        }
+    public static ClientBoundCancelReadyPacket success() {
+        return new ClientBoundCancelReadyPacket(PacketResult.success(null));
     }
 
-    @RequiredArgsConstructor
-    public static class Success extends ClientBoundCancelReadyPacket {
+    public static ClientBoundCancelReadyPacket failed(String failedMessage) {
+        return new ClientBoundCancelReadyPacket(PacketResult.failed(failedMessage));
+    }
 
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.SUCCESS);
-        }
+    public static ClientBoundCancelReadyPacket decode(ByteBuf buf) {
+        return new ClientBoundCancelReadyPacket(PacketResult.decodeVoid(buf));
+    }
+
+    @Override
+    public void encode(ByteBuf buf) {
+        result.encode(buf);
     }
 }

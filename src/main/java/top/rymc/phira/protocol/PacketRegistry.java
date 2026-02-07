@@ -121,16 +121,16 @@ public class PacketRegistry {
 
         CreateRoom(0x05, ServerBoundCreateRoomPacket.class, ServerBoundCreateRoomPacket::new),
         JoinRoom(0x06, ServerBoundJoinRoomPacket.class, ServerBoundJoinRoomPacket::new),
-        LeaveRoom(0x07, ServerBoundLeaveRoomPacket.class, ServerBoundLeaveRoomPacket::new),
+        LeaveRoom(0x07, ServerBoundLeaveRoomPacket.class, () -> ServerBoundLeaveRoomPacket.INSTANCE),
         LockRoom(0x08, ServerBoundLockRoomPacket.class, ServerBoundLockRoomPacket::new),
         CycleRoom(0x09, ServerBoundCycleRoomPacket.class, ServerBoundCycleRoomPacket::new),
 
         SelectChart(0x0A, ServerBoundSelectChartPacket.class, ServerBoundSelectChartPacket::new),
-        RequestStart(0x0B, ServerBoundRequestStartPacket.class, ServerBoundRequestStartPacket::new),
-        Ready(0x0C, ServerBoundReadyPacket.class, ServerBoundReadyPacket::new),
-        CancelReady(0x0D, ServerBoundCancelReadyPacket.class, ServerBoundCancelReadyPacket::new),
+        RequestStart(0x0B, ServerBoundRequestStartPacket.class, () -> ServerBoundRequestStartPacket.INSTANCE),
+        Ready(0x0C, ServerBoundReadyPacket.class, () -> ServerBoundReadyPacket.INSTANCE),
+        CancelReady(0x0D, ServerBoundCancelReadyPacket.class, () -> ServerBoundCancelReadyPacket.INSTANCE),
         Played(0x0E, ServerBoundPlayedPacket.class, ServerBoundPlayedPacket::new),
-        Abort(0x0F, ServerBoundAbortPacket.class, ServerBoundAbortPacket::new),;
+        Abort(0x0F, ServerBoundAbortPacket.class, () -> ServerBoundAbortPacket.INSTANCE),;
 
         private final int id;
         private final Class<? extends ServerBoundPacket> clazz;

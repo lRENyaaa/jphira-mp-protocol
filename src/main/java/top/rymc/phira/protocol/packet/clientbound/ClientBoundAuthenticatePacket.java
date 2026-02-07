@@ -1,50 +1,45 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.data.FullUserProfile;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.data.RoomInfo;
-import top.rymc.phira.protocol.data.UserProfile;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
-public abstract class ClientBoundAuthenticatePacket extends ClientBoundPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientBoundAuthenticatePacket extends ClientBoundPacket {
 
-    @RequiredArgsConstructor
-    public static class Failed extends ClientBoundAuthenticatePacket {
+    private final PacketResult<Data> result;
 
-        private final String reason;
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.FAILED);
-            PacketWriter.write(buf, reason);
-        }
-
+    public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile) {
+        return success(userProfile, null);
     }
 
-    @RequiredArgsConstructor
-    public static class Success extends ClientBoundAuthenticatePacket {
+    public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile, RoomInfo roomInfo) {
+        return new ClientBoundAuthenticatePacket(PacketResult.success(new Data(userProfile, roomInfo)));
+    }
 
-        private final FullUserProfile userProfile;
-        private final RoomInfo roomInfo;
+    public static ClientBoundAuthenticatePacket failed(String failedMessage) {
+        return new ClientBoundAuthenticatePacket(PacketResult.failed(failedMessage));
+    }
 
-        public Success(UserProfile userProfile, boolean isMonitor, RoomInfo roomInfo) {
-            this(new FullUserProfile(userProfile, isMonitor), roomInfo);
-        }
+    public static ClientBoundAuthenticatePacket decode(ByteBuf buf) {
+        return new ClientBoundAuthenticatePacket(PacketResult.decode(buf, Data::decode));
+    }
 
-        public Success(UserProfile userProfile, boolean isMonitor) {
-            this(new FullUserProfile(userProfile, isMonitor));
-        }
+    @Override
+    public void encode(ByteBuf buf) {
+        result.encode(buf);
+    }
 
-        public Success(FullUserProfile userProfile) {
-            this(userProfile, null);
-        }
 
+    private record Data(FullUserProfile userProfile, RoomInfo roomInfo) implements Encodeable {
         @Override
         public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.SUCCESS);
             PacketWriter.write(buf, userProfile);
 
             boolean hasRoomInfo = roomInfo != null;
@@ -52,10 +47,17 @@ public abstract class ClientBoundAuthenticatePacket extends ClientBoundPacket {
             if (hasRoomInfo) {
                 PacketWriter.write(buf, roomInfo);
             }
-
         }
 
-    }
+        public static Data decode(ByteBuf buf) {
+            FullUserProfile userProfile = FullUserProfile.decode(buf);
+            RoomInfo roomInfo = null;
+            if (buf.readBoolean()) {
+                roomInfo = RoomInfo.decode(buf);
+            }
 
+            return new Data(userProfile, roomInfo);
+        }
+    }
 
 }

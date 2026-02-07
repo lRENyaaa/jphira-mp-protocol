@@ -1,51 +1,60 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.data.FullUserProfile;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.data.UserProfile;
 import top.rymc.phira.protocol.data.state.GameState;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
+import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 import java.util.List;
 
-public abstract class ClientBoundJoinRoomPacket extends ClientBoundPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
 
+    private final PacketResult<Data> result;
 
-    @RequiredArgsConstructor
-    public static class Failed extends ClientBoundJoinRoomPacket {
-
-        private final String reason;
-
-        @Override
-        public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.FAILED);
-            PacketWriter.write(buf, reason);
-        }
-
+    public static ClientBoundJoinRoomPacket success(GameState gameState, List<UserProfile> users, List<UserProfile> monitors, boolean isLive) {
+        return success(gameState, FullUserProfile.fromLists(users, monitors), isLive);
     }
 
-    @RequiredArgsConstructor
-    public static class Success extends ClientBoundJoinRoomPacket {
+    public static ClientBoundJoinRoomPacket success(GameState gameState, List<FullUserProfile> users, boolean isLive) {
+        return new ClientBoundJoinRoomPacket(PacketResult.success(new Data(gameState, users, isLive)));
+    }
 
-        private final GameState gameState;
-        private final List<FullUserProfile> users;
-        private final boolean isLive;
+    public static ClientBoundJoinRoomPacket failed(String failedMessage) {
+        return new ClientBoundJoinRoomPacket(PacketResult.failed(failedMessage));
+    }
 
-        public Success(GameState gameState, List<UserProfile> users, List<UserProfile> monitors, boolean isLive) {
-            this(gameState, FullUserProfile.fromLists(users, monitors), isLive);
-        }
+    public static ClientBoundJoinRoomPacket decode(ByteBuf buf) {
+        return new ClientBoundJoinRoomPacket(PacketResult.decode(buf, Data::decode ));
+    }
+
+    @Override
+    public void encode(ByteBuf buf) {
+        result.encode(buf);
+    }
+
+    private record Data(GameState gameState, List<FullUserProfile> users, boolean isLive) implements Encodeable {
 
         @Override
         public void encode(ByteBuf buf) {
-            PacketWriter.write(buf, PacketResult.SUCCESS);
             PacketWriter.write(buf, gameState);
             PacketWriter.write(buf, users);
             PacketWriter.write(buf, isLive);
         }
+
+        public static Data decode(ByteBuf buf) {
+             return new Data(
+                    GameState.decode(buf),
+                    NettyPacketUtil.decodeList(buf, FullUserProfile::decode),
+                    buf.readBoolean()
+            );
+        }
     }
-
-
 }

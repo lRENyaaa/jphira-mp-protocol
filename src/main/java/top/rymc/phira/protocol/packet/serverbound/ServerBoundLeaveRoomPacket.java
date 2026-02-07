@@ -6,6 +6,12 @@ import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 public class ServerBoundLeaveRoomPacket extends ServerBoundPacket {
 
+    public static ServerBoundLeaveRoomPacket INSTANCE = new ServerBoundLeaveRoomPacket();
+
+    private ServerBoundLeaveRoomPacket() {
+        // Singleton instance
+    }
+    
     @Override
     public void decode(ByteBuf buf) {
         // No data to decode for this packet
