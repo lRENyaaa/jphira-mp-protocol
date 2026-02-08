@@ -2,6 +2,7 @@
 Java版本的 [phira-mp](https://github.com/TeamFlos/phira-mp) 服务端侧协议库，基于Netty实现
 
 ### 相关项目
+* [jphira-mp](https://github.com/lRENyaaa/jphira-mp)
 * [pyphira-mp](https://github.com/Evi233/pyphira-mp)
 
 ## ⚙️ 依赖
@@ -68,3 +69,5 @@ public class ServerChannelInitializer extends ChannelInitializer<Channel> {
 
 ## 📜 开源协议
 项目使用 Apache License 2.0 协议开源，见 [LICENSE](./LICENSE)
+
+Copyright (C) 2026 lRENyaaa
