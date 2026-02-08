@@ -36,11 +36,11 @@ public abstract sealed class GameState implements Encodeable permits Playing, Wa
     @Getter(AccessLevel.PRIVATE)
     private enum Registry {
 
-        SelectChart(0x01, SelectChart.class,
+        SelectChart(0x00, SelectChart.class,
                 buf -> buf.readBoolean() ? new SelectChart(buf.readIntLE()) : new SelectChart()
         ),
-        WaitForReady(0x02, WaitForReady.class, buf -> new WaitForReady()),
-        Playing(0x03, Playing.class, buf -> new Playing());
+        WaitForReady(0x01, WaitForReady.class, buf -> new WaitForReady()),
+        Playing(0x02, Playing.class, buf -> new Playing());
 
 
         private final int id;

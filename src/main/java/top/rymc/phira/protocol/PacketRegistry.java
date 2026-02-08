@@ -1,11 +1,10 @@
 package top.rymc.phira.protocol;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import io.netty.util.ReferenceCountUtil;
 import lombok.Getter;
-import top.rymc.phira.protocol.codec.decoder.FrameDecoder;
-import top.rymc.phira.protocol.exception.CodecException;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
 import top.rymc.phira.protocol.packet.clientbound.*;
@@ -13,101 +12,11 @@ import top.rymc.phira.protocol.packet.serverbound.*;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class PacketRegistry {
-
-    private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> SERVER_BOUND_PACKET_MAP = ServerBound.getDecoderMap();
-    private static final Map<Class<? extends ClientBoundPacket>,Integer> CLIENT_BOUND_PACKET_MAP = ClientBound.getEncoderMap();
-
-    /**
-     * Decodes a client-bound packet from the given ByteBuf.
-     *
-     * <p>TCP is a streaming protocol and has no inherent packet boundaries.
-     * The length VarInt at the start of each packet should be handled
-     * by a ChannelHandler: it is responsible for assembling fragmented
-     * data, merging multiple packets, and removing the length field.
-     * Therefore, this method assumes 'buf' already contains only the
-     * packet body (length field removed).</p>
-     *
-     * <p>If you are unsure how to handle packet boundaries and length fields,
-     * refer to or use {@link FrameDecoder}.</p>
-     *
-     * @param buf the ByteBuf containing the packet body (length field removed)
-     * @return the decoded ServerBoundPacket
-     * @throws CodecException if the packet ID is unknown
-     */
-    public static ServerBoundPacket decode(ByteBuf buf) throws CodecException {
-
-        int packetId = buf.readUnsignedByte();
-
-        Function<ByteBuf, ? extends ServerBoundPacket> decoder = SERVER_BOUND_PACKET_MAP.get(packetId);
-        if (decoder == null) {
-            throw new CodecException("Unknown ServerBound packet id: " + packetId);
-        }
-
-        return decoder.apply(buf);
-    }
-
-
-    /**
-     * Encodes a server-bound packet into a read-only {@link ByteBuf} ready for sending.
-     *
-     * @param packet the packet to encode
-     * @param bufSupplier a supplier that provides a new writable {@link ByteBuf} for encoding
-     * @return a read-only {@link ByteBuf} containing length + packet body
-     * @throws CodecException if the packet class is unknown
-     */
-    public static ByteBuf encode(ClientBoundPacket packet, Supplier<ByteBuf> bufSupplier) throws CodecException {
-
-        ByteBuf buf = bufSupplier.get();
-        try {
-            int packetId = getClientBoundPacketId(packet);
-
-            buf.writeByte(packetId);
-            packet.encode(buf);
-
-            return buf.asReadOnly();
-        } catch (Exception e) {
-            ReferenceCountUtil.safeRelease(buf);
-            throw e;
-        }
-
-    }
-
-    /**
-     * Encodes a server-bound packet into a read-only {@link ByteBuf} ready for sending.
-     *
-     * @param packet the packet to encode
-     * @return a read-only {@link ByteBuf} containing length + packet body
-     * @throws CodecException if the packet class is unknown
-     */
-    public static ByteBuf encode(ClientBoundPacket packet) throws CodecException {
-        return encode(packet, Unpooled::buffer);
-    }
-
-    private static final Map<Class<? extends ClientBoundPacket>, Integer> CLIENT_BOUND_PACKET_CACHE = new ConcurrentHashMap<>();
-
-    private static int getClientBoundPacketId(ClientBoundPacket packet) throws CodecException {
-        Class<? extends ClientBoundPacket> clazz = packet.getClass();
-
-        Integer id = CLIENT_BOUND_PACKET_CACHE.get(clazz);
-        if (id != null) return id;
-
-        for (Map.Entry<Class<? extends ClientBoundPacket>, Integer> entry : CLIENT_BOUND_PACKET_MAP.entrySet()) {
-            if (entry.getKey().isAssignableFrom(clazz)) {
-                id = entry.getValue();
-                CLIENT_BOUND_PACKET_CACHE.put(clazz, id);
-                return id;
-            }
-        }
-
-        throw new CodecException("Unknown ClientBound packet class: " + clazz);
-    }
-
 
     @Getter
     public enum ServerBound {
@@ -143,10 +52,54 @@ public class PacketRegistry {
         }
 
         private static Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> getDecoderMap() {
-            return Arrays.stream(values()).collect(Collectors.toMap(
+            return Map.copyOf(Arrays.stream(values()).collect(Collectors.toMap(
                     ServerBound::getId,
                     packetEnum -> buf -> packetEnum.getDecoder().apply(buf))
-            );
+            ));
+        }
+
+        private static Map<Class<? extends ServerBoundPacket>,Integer> getEncoderMap() {
+            return Map.copyOf(Arrays.stream(values()).collect(Collectors.toMap(
+                    ServerBound::getClazz,
+                    ServerBound::getId
+            )));
+        }
+
+        private static final Map<Class<? extends ServerBoundPacket>,Integer> ENCODER_MAP = getEncoderMap();
+
+        public static ByteBuf encode(ServerBoundPacket packet, Supplier<ByteBuf> bufConstructor) {
+
+            ByteBuf buf = bufConstructor.get();
+            try {
+                Class<? extends ServerBoundPacket> clazz = packet.getClass();
+                Integer id = ENCODER_MAP.get(clazz);
+                if (id == null) {
+                    throw new EncoderException("Unknown ClientBound packet class: " + clazz.getName());
+                }
+
+                buf.writeByte(id);
+                packet.encode(buf);
+
+                return buf.asReadOnly();
+            } catch (Exception e) {
+                ReferenceCountUtil.safeRelease(buf);
+                throw e;
+            }
+
+        }
+
+        private static final Map<Integer, Function<ByteBuf,? extends ServerBoundPacket>> DECODER_MAP = getDecoderMap();
+
+        public static ServerBoundPacket decode(ByteBuf buf) {
+
+            int packetId = buf.readUnsignedByte();
+
+            Function<ByteBuf, ? extends ServerBoundPacket> decoder = DECODER_MAP.get(packetId);
+            if (decoder == null) {
+                throw new DecoderException("Unknown ServerBound packet id: " + packetId);
+            }
+
+            return decoder.apply(buf);
         }
     }
 
@@ -188,11 +141,55 @@ public class PacketRegistry {
             this.decoder = decoder;
         }
 
+        private static Map<Integer, Function<ByteBuf,? extends ClientBoundPacket>> getDecoderMap() {
+            return Map.copyOf(Arrays.stream(values()).collect(Collectors.toMap(
+                    ClientBound::getId,
+                    packetEnum -> buf -> packetEnum.getDecoder().apply(buf))
+            ));
+        }
+
         private static Map<Class<? extends ClientBoundPacket>,Integer> getEncoderMap() {
             return Arrays.stream(values()).collect(Collectors.toMap(
                     ClientBound::getClazz,
                     ClientBound::getId
             ));
+        }
+
+        private static final Map<Class<? extends ClientBoundPacket>,Integer> ENCODER_MAP = getEncoderMap();
+
+        public static ByteBuf encode(ClientBoundPacket packet, Supplier<ByteBuf> bufConstructor) {
+
+            ByteBuf buf = bufConstructor.get();
+            try {
+                Class<? extends ClientBoundPacket> clazz = packet.getClass();
+                Integer id = ENCODER_MAP.get(clazz);
+                if (id == null) {
+                    throw new EncoderException("Unknown ClientBound packet class: " + clazz.getName());
+                }
+
+                buf.writeByte(id);
+                packet.encode(buf);
+
+                return buf.asReadOnly();
+            } catch (Exception e) {
+                ReferenceCountUtil.safeRelease(buf);
+                throw e;
+            }
+
+        }
+
+        private static final Map<Integer, Function<ByteBuf,? extends ClientBoundPacket>> DECODER_MAP = getDecoderMap();
+
+        public static ClientBoundPacket decode(ByteBuf buf) {
+
+            int packetId = buf.readUnsignedByte();
+
+            Function<ByteBuf, ? extends ClientBoundPacket> decoder = DECODER_MAP.get(packetId);
+            if (decoder == null) {
+                throw new DecoderException("Unknown ClientBound packet id: " + packetId);
+            }
+
+            return decoder.apply(buf);
         }
     }
 }

@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.DecoderException;
 import top.rymc.phira.protocol.codec.Decodeable;
 import top.rymc.phira.protocol.codec.Encodeable;
-import top.rymc.phira.protocol.data.state.GameState;
 import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
 

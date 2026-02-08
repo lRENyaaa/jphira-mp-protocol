@@ -2,10 +2,10 @@ package top.rymc.phira.protocol.data.message;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import top.rymc.phira.protocol.codec.Encodeable;
-import top.rymc.phira.protocol.data.state.GameState;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 import java.util.Arrays;
@@ -21,7 +21,12 @@ public abstract class Message implements Encodeable {
 
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.writeByte(buf, ENCODER_MAP.get(this.getClass()));
+        Class<? extends Message> clazz = this.getClass();
+        Integer id = ENCODER_MAP.get(clazz);
+        if (id == null) {
+            throw new EncoderException("Unknown Message class: " + clazz.getName());
+        }
+        PacketWriter.writeByte(buf, id);
     }
 
     public static Message decode(ByteBuf buf) {
