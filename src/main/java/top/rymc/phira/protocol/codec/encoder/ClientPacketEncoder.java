@@ -5,14 +5,15 @@ import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 import top.rymc.phira.protocol.PacketRegistry;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
+import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
-public class PacketEncoder extends ChannelOutboundHandlerAdapter {
+public class ClientPacketEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (msg instanceof ClientBoundPacket packet) {
+        if (msg instanceof ServerBoundPacket packet) {
             try {
-                msg = PacketRegistry.ClientBound.encode(packet, () -> ctx.alloc().buffer());
+                msg = PacketRegistry.ServerBound.encode(packet, () -> ctx.alloc().buffer());
             } catch (Exception e) {
                 promise.setFailure(e);
                 ctx.close();

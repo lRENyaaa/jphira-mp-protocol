@@ -1,6 +1,6 @@
 package top.rymc.phira.protocol.util;
 
-public class Float16Util {
+public final class Float16Util {
 
     private Float16Util() {}
 

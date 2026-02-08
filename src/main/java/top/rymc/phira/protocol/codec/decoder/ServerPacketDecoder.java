@@ -10,7 +10,7 @@ import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 import java.util.function.Consumer;
 
-public class PacketDecoder extends ChannelInboundHandlerAdapter {
+public class ServerPacketDecoder extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {

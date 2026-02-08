@@ -5,7 +5,7 @@ import top.rymc.phira.protocol.codec.Encodeable;
 
 import java.util.List;
 
-public class PacketWriter {
+public final class PacketWriter {
 
     private PacketWriter() {}
 

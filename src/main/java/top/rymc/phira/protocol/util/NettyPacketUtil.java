@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class NettyPacketUtil {
+public final class NettyPacketUtil {
 
     private NettyPacketUtil() {}
 
@@ -115,17 +115,6 @@ public class NettyPacketUtil {
 
     public static void encodeFloat16LE(ByteBuf buf, float value) {
         buf.writeShortLE(Float16Util.floatToHalf(value));
-    }
-
-    public static <T extends Decodeable> List<T> decodeList(ByteBuf buf, Supplier<T> constructor) {
-        int length = decodeVarInt(buf);
-        List<T> list = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            T decodeable = constructor.get();
-            decodeable.decode(buf);
-            list.add(decodeable);
-        }
-        return list;
     }
 
     public static <T extends Encodeable> List<T> decodeList(ByteBuf buf, Function<ByteBuf, T> decoder) {
