@@ -19,7 +19,7 @@ jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用
 <dependency>
     <groupId>com.github.lRENyaaa</groupId>
     <artifactId>jphira-mp-protocol</artifactId>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -28,14 +28,14 @@ jphira-mp-protocol 在 [JitPack](https://jitpack.io/) 上可用
 
 ```java
 public class ServerChannelInitializer extends ChannelInitializer<Channel> {
-    
+
     @Override
     protected void initChannel(Channel channel) {
 
-        FrameDecoder decoder = new FrameDecoder();
-        channel.pipeline().addLast(decoder);
+        HandshakeDecoder handshake = new HandshakeDecoder();
+        channel.pipeline().addLast(handshake);
 
-        decoder.getClientProtocolVersion().whenComplete((version,throwable) -> {
+        handshake.getClientProtocolVersion().whenComplete((version,throwable) -> {
             if (throwable != null) {
                 throwable.printStackTrace();
                 if (channel.isActive()) {
@@ -45,15 +45,19 @@ public class ServerChannelInitializer extends ChannelInitializer<Channel> {
             }
 
             InetSocketAddress remoteAddress = (InetSocketAddress) channel.remoteAddress();
-            String ipPort = remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort();
 
-            System.out.printf("Establishing a connection from %s, client version: %s%n",ipPort,version);
+            System.out.printf("Establishing a connection from %s: %s, client version: %s%n",
+                    remoteAddress.getAddress().getHostAddress(),
+                    remoteAddress.getPort(),
+                    version
+            );
 
             channel.pipeline()
+                    .addLast(new FrameDecoder())
                     .addLast(new FrameEncoder())
                     .addLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                    .addLast(new PacketDecoder())
-                    .addLast(new PacketEncoder());
+                    .addLast(new ServerPacketDecoder())
+                    .addLast(new ServerPacketEncoder());
 
             // 在这添加你自己的 handlers
         });

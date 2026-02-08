@@ -34,7 +34,7 @@ public class ClientBoundAuthenticatePacket extends ClientBoundPacket {
 
     @Override
     public void encode(ByteBuf buf) {
-        result.encode(buf);
+        PacketWriter.write(buf, result);
     }
 
     @Override

@@ -3,7 +3,6 @@ package top.rymc.phira.protocol.util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.DecoderException;
-import top.rymc.phira.protocol.codec.Decodeable;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.exception.BadVarIntException;
 import top.rymc.phira.protocol.exception.NeedMoreDataException;
@@ -12,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public final class NettyPacketUtil {
 

@@ -8,6 +8,7 @@ import top.rymc.phira.protocol.data.EncodeableVoid;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
+import top.rymc.phira.protocol.util.PacketWriter;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientBoundAbortPacket extends ClientBoundPacket {
@@ -28,7 +29,7 @@ public class ClientBoundAbortPacket extends ClientBoundPacket {
 
     @Override
     public void encode(ByteBuf buf) {
-        result.encode(buf);
+        PacketWriter.write(buf, result);
     }
 
     @Override

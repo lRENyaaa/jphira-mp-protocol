@@ -13,6 +13,10 @@ public class ClientBoundMessagePacket extends ClientBoundPacket {
 
     private final Message message;
 
+    public static ClientBoundMessagePacket create(Message message) {
+        return new ClientBoundMessagePacket(message);
+    }
+
     public static ClientBoundMessagePacket decode(ByteBuf buf) {
         return new ClientBoundMessagePacket(Message.decode(buf));
     }

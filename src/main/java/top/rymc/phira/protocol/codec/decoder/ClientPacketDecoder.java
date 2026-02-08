@@ -7,7 +7,6 @@ import io.netty.handler.codec.CodecException;
 import io.netty.util.ReferenceCountUtil;
 import top.rymc.phira.protocol.PacketRegistry;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
-import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 import java.util.function.Consumer;
 

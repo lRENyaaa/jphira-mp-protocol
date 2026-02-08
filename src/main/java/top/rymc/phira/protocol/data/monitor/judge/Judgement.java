@@ -5,7 +5,6 @@ import io.netty.handler.codec.DecoderException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import top.rymc.phira.protocol.PacketRegistry;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.PacketWriter;
 

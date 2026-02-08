@@ -74,7 +74,7 @@ public class PacketRegistry {
                 Class<? extends ServerBoundPacket> clazz = packet.getClass();
                 Integer id = ENCODER_MAP.get(clazz);
                 if (id == null) {
-                    throw new EncoderException("Unknown ClientBound packet class: " + clazz.getName());
+                    throw new EncoderException("Unknown ServerBound packet class: " + clazz.getName());
                 }
 
                 buf.writeByte(id);

@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 import top.rymc.phira.protocol.PacketRegistry;
-import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
 
 public class ClientPacketEncoder extends ChannelOutboundHandlerAdapter {

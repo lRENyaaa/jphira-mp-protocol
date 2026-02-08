@@ -2,7 +2,6 @@ package top.rymc.phira.protocol.data.state;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
-import io.netty.util.collection.IntObjectMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import top.rymc.phira.protocol.codec.Encodeable;
