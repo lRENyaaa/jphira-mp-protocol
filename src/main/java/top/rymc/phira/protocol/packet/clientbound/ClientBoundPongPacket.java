@@ -1,6 +1,7 @@
 package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
+import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 
 public class ClientBoundPongPacket extends ClientBoundPacket {
@@ -14,5 +15,10 @@ public class ClientBoundPongPacket extends ClientBoundPacket {
     @Override
     public void encode(ByteBuf buf) {
         // Do nothing here
+    }
+
+    @Override
+    public void handle(ClientBoundPacketHandler handler) {
+        handler.handle(this);
     }
 }

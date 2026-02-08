@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.EncodeableVoid;
 import top.rymc.phira.protocol.data.PacketResult;
+import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
@@ -28,5 +29,10 @@ public class ClientBoundLeaveRoomPacket extends ClientBoundPacket {
     @Override
     public void encode(ByteBuf buf) {
         result.encode(buf);
+    }
+
+    @Override
+    public void handle(ClientBoundPacketHandler handler) {
+        handler.handle(this);
     }
 }

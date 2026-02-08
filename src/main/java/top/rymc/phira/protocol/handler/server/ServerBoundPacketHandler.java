@@ -1,8 +1,8 @@
-package top.rymc.phira.protocol.handler;
+package top.rymc.phira.protocol.handler.server;
 
 import top.rymc.phira.protocol.packet.serverbound.*;
 
-public abstract class PacketHandler {
+public abstract class ServerBoundPacketHandler {
 
     public abstract void handle(ServerBoundPingPacket packet);
 

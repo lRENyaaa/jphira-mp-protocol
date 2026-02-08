@@ -7,6 +7,7 @@ import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.data.FullUserProfile;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.data.RoomInfo;
+import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
@@ -36,6 +37,10 @@ public class ClientBoundAuthenticatePacket extends ClientBoundPacket {
         result.encode(buf);
     }
 
+    @Override
+    public void handle(ClientBoundPacketHandler handler) {
+        handler.handle(this);
+    }
 
     private record Data(FullUserProfile userProfile, RoomInfo roomInfo) implements Encodeable {
         @Override

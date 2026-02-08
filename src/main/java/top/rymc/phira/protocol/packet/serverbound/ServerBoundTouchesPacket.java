@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.monitor.touch.TouchFrame;
-import top.rymc.phira.protocol.handler.PacketHandler;
+import top.rymc.phira.protocol.handler.server.ServerBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
@@ -29,7 +29,7 @@ public class ServerBoundTouchesPacket extends ServerBoundPacket {
     }
 
     @Override
-    public void handle(PacketHandler handler) {
+    public void handle(ServerBoundPacketHandler handler) {
         handler.handle(this);
     }
 }

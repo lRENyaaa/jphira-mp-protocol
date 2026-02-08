@@ -8,6 +8,7 @@ import top.rymc.phira.protocol.data.FullUserProfile;
 import top.rymc.phira.protocol.data.PacketResult;
 import top.rymc.phira.protocol.data.UserProfile;
 import top.rymc.phira.protocol.data.state.GameState;
+import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
@@ -38,6 +39,11 @@ public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
     @Override
     public void encode(ByteBuf buf) {
         result.encode(buf);
+    }
+
+    @Override
+    public void handle(ClientBoundPacketHandler handler) {
+        handler.handle(this);
     }
 
     private record Data(GameState gameState, List<FullUserProfile> users, boolean isLive) implements Encodeable {

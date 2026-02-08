@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.monitor.judge.JudgeEvent;
 import top.rymc.phira.protocol.data.monitor.touch.TouchFrame;
+import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
@@ -32,5 +33,10 @@ public class ClientBoundJudgesPacket extends ClientBoundPacket {
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, id);
         PacketWriter.write(buf, judges);
+    }
+
+    @Override
+    public void handle(ClientBoundPacketHandler handler) {
+        handler.handle(this);
     }
 }

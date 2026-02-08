@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'top.rymc'
-version = '2.0.0-Dev-20260208-00'
+version = '2.0.0-Dev-20260208-01'
 
 repositories {
     mavenCentral()

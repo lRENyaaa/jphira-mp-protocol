@@ -1,4 +1,4 @@
-package top.rymc.phira.protocol.handler;
+package top.rymc.phira.protocol.handler.server;
 
 import io.netty.channel.Channel;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import top.rymc.phira.protocol.packet.serverbound.*;
 
 @RequiredArgsConstructor
 @Getter
-public class SimplePacketHandler extends PacketHandler {
+public class SimpleServerBoundPacketHandler extends ServerBoundPacketHandler {
 
     protected final Channel channel;
 

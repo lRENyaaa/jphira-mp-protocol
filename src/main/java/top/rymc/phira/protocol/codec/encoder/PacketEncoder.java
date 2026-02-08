@@ -12,7 +12,7 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (msg instanceof ClientBoundPacket packet) {
             try {
-                msg = PacketRegistry.encode(packet, () -> ctx.alloc().buffer());
+                msg = PacketRegistry.ClientBound.encode(packet, () -> ctx.alloc().buffer());
             } catch (Exception e) {
                 promise.setFailure(e);
                 ctx.close();
