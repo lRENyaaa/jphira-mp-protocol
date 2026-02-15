@@ -81,6 +81,17 @@ public class HandshakeDecoder extends ByteToMessageDecoder {
         super.channelInactive(ctx);
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext context, Throwable throwable) throws Exception {
+        cancelTimeout();
+        if (!clientProtocolVersionPromise.isDone()) {
+            clientProtocolVersionPromise.completeExceptionally(throwable);
+            context.close();
+            return;
+        }
+        super.exceptionCaught(context, throwable);
+    }
+
     private void cancelTimeout() {
         if (timeoutTask != null) {
             timeoutTask.cancel(false);
