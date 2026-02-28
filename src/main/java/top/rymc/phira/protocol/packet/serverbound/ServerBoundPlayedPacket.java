@@ -14,6 +14,10 @@ public class ServerBoundPlayedPacket extends ServerBoundPacket {
 
     private final int id;
 
+    public static ServerBoundPlayedPacket create(int id) {
+        return new ServerBoundPlayedPacket(id);
+    }
+
     public static ServerBoundPlayedPacket decode(ByteBuf buf) {
         return new ServerBoundPlayedPacket(buf.readIntLE());
     }

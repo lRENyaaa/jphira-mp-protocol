@@ -2,6 +2,7 @@ package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.data.message.Message;
 import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
@@ -9,6 +10,7 @@ import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class ClientBoundMessagePacket extends ClientBoundPacket {
 
     private final Message message;

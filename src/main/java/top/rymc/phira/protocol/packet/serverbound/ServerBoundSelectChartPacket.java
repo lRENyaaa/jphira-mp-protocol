@@ -14,6 +14,10 @@ public class ServerBoundSelectChartPacket extends ServerBoundPacket {
 
     private final int id;
 
+    public static ServerBoundSelectChartPacket create(int id) {
+        return new ServerBoundSelectChartPacket(id);
+    }
+
     public static ServerBoundSelectChartPacket decode(ByteBuf buf) {
         return new ServerBoundSelectChartPacket(buf.readIntLE());
     }

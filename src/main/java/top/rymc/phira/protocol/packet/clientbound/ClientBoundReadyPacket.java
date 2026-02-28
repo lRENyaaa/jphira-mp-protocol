@@ -14,8 +14,16 @@ public class ClientBoundReadyPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundReadyPacket success() {
-        return new ClientBoundReadyPacket(PacketResult.success(null));
+        return new ClientBoundReadyPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundReadyPacket failed(String failedMessage) {

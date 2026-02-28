@@ -14,8 +14,16 @@ public class ClientBoundRequestStartPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundRequestStartPacket success() {
-        return new ClientBoundRequestStartPacket(PacketResult.success(null));
+        return new ClientBoundRequestStartPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundRequestStartPacket failed(String failedMessage) {

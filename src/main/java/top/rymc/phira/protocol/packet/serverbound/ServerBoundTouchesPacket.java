@@ -17,6 +17,10 @@ public class ServerBoundTouchesPacket extends ServerBoundPacket {
 
     private final List<TouchFrame> frames;
 
+    public static ServerBoundTouchesPacket create(List<TouchFrame> frames) {
+        return new ServerBoundTouchesPacket(frames);
+    }
+
     public static ServerBoundTouchesPacket decode(ByteBuf buf) {
         return new ServerBoundTouchesPacket(
                 NettyPacketUtil.decodeList(buf, TouchFrame::decode)

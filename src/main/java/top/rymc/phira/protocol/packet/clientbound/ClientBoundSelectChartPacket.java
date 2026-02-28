@@ -14,8 +14,16 @@ public class ClientBoundSelectChartPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundSelectChartPacket success() {
-        return new ClientBoundSelectChartPacket(PacketResult.success(null));
+        return new ClientBoundSelectChartPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundSelectChartPacket failed(String failedMessage) {

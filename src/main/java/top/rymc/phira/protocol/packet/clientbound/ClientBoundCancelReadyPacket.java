@@ -14,8 +14,16 @@ public class ClientBoundCancelReadyPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundCancelReadyPacket success() {
-        return new ClientBoundCancelReadyPacket(PacketResult.success(null));
+        return new ClientBoundCancelReadyPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundCancelReadyPacket failed(String failedMessage) {

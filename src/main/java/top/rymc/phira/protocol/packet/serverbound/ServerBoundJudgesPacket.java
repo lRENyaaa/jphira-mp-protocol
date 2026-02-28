@@ -18,6 +18,10 @@ public class ServerBoundJudgesPacket extends ServerBoundPacket {
 
     private final List<JudgeEvent> judges;
 
+    public static ServerBoundJudgesPacket create(List<JudgeEvent> judges) {
+        return new ServerBoundJudgesPacket(judges);
+    }
+
     public static ServerBoundJudgesPacket decode(ByteBuf buf) {
         return new ServerBoundJudgesPacket(NettyPacketUtil.decodeList(buf, JudgeEvent::decode));
     }

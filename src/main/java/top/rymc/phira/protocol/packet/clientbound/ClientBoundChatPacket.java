@@ -14,8 +14,16 @@ public class ClientBoundChatPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundChatPacket success() {
-        return new ClientBoundChatPacket(PacketResult.success(null));
+        return new ClientBoundChatPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundChatPacket failed(String failedMessage) {

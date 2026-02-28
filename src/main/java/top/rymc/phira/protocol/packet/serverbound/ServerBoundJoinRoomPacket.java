@@ -16,6 +16,10 @@ public class ServerBoundJoinRoomPacket extends ServerBoundPacket {
     private final String roomId;
     private final boolean monitor;
 
+    public static ServerBoundJoinRoomPacket create(String roomId, boolean monitor) {
+        return new ServerBoundJoinRoomPacket(roomId, monitor);
+    }
+
     public static ServerBoundJoinRoomPacket decode(ByteBuf buf) {
         return new ServerBoundJoinRoomPacket(
                 NettyPacketUtil.decodeString(buf, 20),

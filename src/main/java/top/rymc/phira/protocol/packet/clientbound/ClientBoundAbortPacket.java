@@ -15,8 +15,16 @@ public class ClientBoundAbortPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundAbortPacket success() {
-        return new ClientBoundAbortPacket(PacketResult.success(null));
+        return new ClientBoundAbortPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundAbortPacket failed(String failedMessage) {

@@ -14,8 +14,16 @@ public class ClientBoundPlayedPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundPlayedPacket success() {
-        return new ClientBoundPlayedPacket(PacketResult.success(null));
+        return new ClientBoundPlayedPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundPlayedPacket failed(String failedMessage) {

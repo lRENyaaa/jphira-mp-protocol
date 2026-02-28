@@ -15,7 +15,7 @@ public class ClientBoundLeaveRoomPacket extends ClientBoundPacket {
     private final PacketResult<EncodeableVoid> result;
 
     public static ClientBoundLeaveRoomPacket success() {
-        return new ClientBoundLeaveRoomPacket(PacketResult.success(null));
+        return new ClientBoundLeaveRoomPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundLeaveRoomPacket failed(String failedMessage) {

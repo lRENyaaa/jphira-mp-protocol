@@ -14,8 +14,16 @@ public class ClientBoundCycleRoomPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundCycleRoomPacket success() {
-        return new ClientBoundCycleRoomPacket(PacketResult.success(null));
+        return new ClientBoundCycleRoomPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundCycleRoomPacket failed(String failedMessage) {

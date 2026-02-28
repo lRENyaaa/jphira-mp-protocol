@@ -4,13 +4,11 @@ import io.netty.buffer.ByteBuf;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 
-import java.util.Optional;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class PacketResult<T extends Encodeable> implements Encodeable {
 
-    // Mimicking rust anyhow Result<T, String>
-    // To accurately mimic the specific case of Result<(), String>, null result is permitted.
     private final String failedMessage;
     private final T result;
 
@@ -19,12 +17,12 @@ public class PacketResult<T extends Encodeable> implements Encodeable {
         return failedMessage == null;
     }
 
-    public Optional<T> getResult() {
+    public T getResult() {
         if (failedMessage != null) {
             throw new IllegalStateException("Packet result is failed");
         }
 
-        return Optional.ofNullable(result);
+        return result;
     }
 
     public String getFailedMessage() {
@@ -40,7 +38,11 @@ public class PacketResult<T extends Encodeable> implements Encodeable {
     }
 
     public static <T extends Encodeable> PacketResult<T> success(T result) {
-        return new PacketResult<>(result);
+        return new PacketResult<>(Objects.requireNonNull(result));
+    }
+
+    public static PacketResult<EncodeableVoid> successVoid() {
+        return new PacketResult<>((EncodeableVoid) null);
     }
 
     private PacketResult(T result) {
@@ -62,12 +64,12 @@ public class PacketResult<T extends Encodeable> implements Encodeable {
     }
 
 
-    public static <T extends Encodeable> PacketResult<T> decodeVoid(ByteBuf buf) {
+    public static PacketResult<EncodeableVoid> decodeVoid(ByteBuf buf) {
         if (!buf.readBoolean()) {
             return new PacketResult<>(NettyPacketUtil.decodeString(buf));
         }
 
-        return new PacketResult<>((T) null);
+        return new PacketResult<>((EncodeableVoid) null);
     }
 
     @Override

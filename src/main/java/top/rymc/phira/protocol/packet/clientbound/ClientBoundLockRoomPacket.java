@@ -14,8 +14,16 @@ public class ClientBoundLockRoomPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundLockRoomPacket success() {
-        return new ClientBoundLockRoomPacket(PacketResult.success(null));
+        return new ClientBoundLockRoomPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundLockRoomPacket failed(String failedMessage) {

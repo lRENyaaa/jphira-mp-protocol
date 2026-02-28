@@ -14,6 +14,10 @@ public class ServerBoundCycleRoomPacket extends ServerBoundPacket {
 
     private final boolean cycle;
 
+    public static ServerBoundCycleRoomPacket create(boolean cycle) {
+        return new ServerBoundCycleRoomPacket(cycle);
+    }
+
     public static ServerBoundCycleRoomPacket decode(ByteBuf buf) {
         return new ServerBoundCycleRoomPacket(buf.readBoolean());
     }

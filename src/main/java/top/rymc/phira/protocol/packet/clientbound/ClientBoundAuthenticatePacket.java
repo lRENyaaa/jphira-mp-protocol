@@ -16,6 +16,22 @@ public class ClientBoundAuthenticatePacket extends ClientBoundPacket {
 
     private final PacketResult<Data> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
+    public FullUserProfile getUserProfile() {
+        return result.getResult().userProfile;
+    }
+
+    public RoomInfo getRoomInfo() {
+        return result.getResult().roomInfo;
+    }
+
     public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile) {
         return success(userProfile, null);
     }

@@ -15,6 +15,10 @@ public class ServerBoundAuthenticatePacket extends ServerBoundPacket {
 
     private final String token;
 
+    public static ServerBoundAuthenticatePacket create(String token) {
+        return new ServerBoundAuthenticatePacket(token);
+    }
+
     public static ServerBoundAuthenticatePacket decode(ByteBuf buf) {
         return new ServerBoundAuthenticatePacket(NettyPacketUtil.decodeString(buf, 32));
     }

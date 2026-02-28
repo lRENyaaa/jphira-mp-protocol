@@ -15,6 +15,10 @@ public class ServerBoundCreateRoomPacket extends ServerBoundPacket {
 
     private final String roomId;
 
+    public static ServerBoundCreateRoomPacket create(String roomId) {
+        return new ServerBoundCreateRoomPacket(roomId);
+    }
+
     public static ServerBoundCreateRoomPacket decode(ByteBuf buf) {
         return new ServerBoundCreateRoomPacket(NettyPacketUtil.decodeString(buf, 20));
     }

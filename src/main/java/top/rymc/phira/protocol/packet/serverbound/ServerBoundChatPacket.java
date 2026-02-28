@@ -15,6 +15,10 @@ public class ServerBoundChatPacket extends ServerBoundPacket {
 
     private final String message;
 
+    public static ServerBoundChatPacket create(String message) {
+        return new ServerBoundChatPacket(message);
+    }
+
     public static ServerBoundChatPacket decode(ByteBuf buf) {
         return new ServerBoundChatPacket(NettyPacketUtil.decodeString(buf, 200));
     }

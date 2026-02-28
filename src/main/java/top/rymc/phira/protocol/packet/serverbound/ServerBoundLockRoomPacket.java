@@ -14,6 +14,10 @@ public class ServerBoundLockRoomPacket extends ServerBoundPacket {
 
     private final boolean lock;
 
+    public static ServerBoundLockRoomPacket create(boolean lock) {
+        return new ServerBoundLockRoomPacket(lock);
+    }
+
     public static ServerBoundLockRoomPacket decode(ByteBuf buf) {
         return new ServerBoundLockRoomPacket(buf.readBoolean());
     }

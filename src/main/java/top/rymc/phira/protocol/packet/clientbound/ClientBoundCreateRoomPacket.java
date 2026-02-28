@@ -9,14 +9,21 @@ import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
-
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientBoundCreateRoomPacket extends ClientBoundPacket {
 
     private final PacketResult<EncodeableVoid> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
     public static ClientBoundCreateRoomPacket success() {
-        return new ClientBoundCreateRoomPacket(PacketResult.success(null));
+        return new ClientBoundCreateRoomPacket(PacketResult.successVoid());
     }
 
     public static ClientBoundCreateRoomPacket failed(String failedMessage) {

@@ -20,6 +20,26 @@ public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
 
     private final PacketResult<Data> result;
 
+    public boolean isSuccess() {
+        return result.isSuccess();
+    }
+
+    public String getFailedMessage() {
+        return result.getFailedMessage();
+    }
+
+    public GameState getGameState() {
+        return result.getResult().gameState;
+    }
+
+    public List<FullUserProfile> getUsers() {
+        return result.getResult().users;
+    }
+
+    public boolean isLive() {
+        return result.getResult().live;
+    }
+
     public static ClientBoundJoinRoomPacket success(GameState gameState, List<UserProfile> users, List<UserProfile> monitors, boolean isLive) {
         return success(gameState, FullUserProfile.fromLists(users, monitors), isLive);
     }
@@ -33,7 +53,7 @@ public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
     }
 
     public static ClientBoundJoinRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundJoinRoomPacket(PacketResult.decode(buf, Data::decode ));
+        return new ClientBoundJoinRoomPacket(PacketResult.decode(buf, Data::decode));
     }
 
     @Override
@@ -46,13 +66,13 @@ public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
         handler.handle(this);
     }
 
-    private record Data(GameState gameState, List<FullUserProfile> users, boolean isLive) implements Encodeable {
+    private record Data(GameState gameState, List<FullUserProfile> users, boolean live) implements Encodeable {
 
         @Override
         public void encode(ByteBuf buf) {
             PacketWriter.write(buf, gameState);
             PacketWriter.write(buf, users);
-            PacketWriter.write(buf, isLive);
+            PacketWriter.write(buf, live);
         }
 
         public static Data decode(ByteBuf buf) {

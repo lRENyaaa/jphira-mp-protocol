@@ -2,15 +2,17 @@ package top.rymc.phira.protocol.packet.clientbound;
 
 import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import top.rymc.phira.protocol.handler.client.ClientBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.util.PacketWriter;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientBoundChangeHostPacket extends ClientBoundPacket {
 
-    private final boolean isHost;
+    private final boolean host;
 
     public static ClientBoundChangeHostPacket create(boolean isHost) {
         return new ClientBoundChangeHostPacket(isHost);
@@ -22,7 +24,7 @@ public class ClientBoundChangeHostPacket extends ClientBoundPacket {
 
     @Override
     public void encode(ByteBuf buf) {
-        PacketWriter.write(buf, isHost);
+        PacketWriter.write(buf, host);
     }
 
     @Override
