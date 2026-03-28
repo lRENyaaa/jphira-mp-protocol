@@ -34,7 +34,7 @@ public class PacketResult<T extends Encodeable> implements Encodeable {
     }
 
     public static <T extends Encodeable> PacketResult<T> failed(String failedMessage) {
-        return new PacketResult<>(failedMessage);
+        return new PacketResult<>(Objects.requireNonNull(failedMessage));
     }
 
     public static <T extends Encodeable> PacketResult<T> success(T result) {
