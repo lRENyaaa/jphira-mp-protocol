@@ -3,7 +3,7 @@ package top.rymc.phira.protocol.handler.client;
 import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.packet.clientbound.*;
 
-public class SimpleClientBoundPacketHandler extends ClientBoundPacketHandler{
+public class SimpleClientBoundPacketHandler extends ClientBoundPacketHandler {
 
     @Override
     public void handle(ClientBoundPongPacket packet) {

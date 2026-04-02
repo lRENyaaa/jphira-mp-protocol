@@ -1,21 +1,21 @@
 package top.rymc.phira.protocol.handler.server;
 
-import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.packet.ClientBoundPacket;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
 import top.rymc.phira.protocol.packet.clientbound.ClientBoundPongPacket;
 import top.rymc.phira.protocol.packet.serverbound.*;
 
 @RequiredArgsConstructor
 @Getter
-public class SimpleServerBoundPacketHandler extends ServerBoundPacketHandler {
+public abstract class SimpleServerBoundPacketHandler extends ServerBoundPacketHandler {
 
-    protected final Channel channel;
+    protected abstract void sendPacket(ClientBoundPacket packet);
 
     @Override
     public void handle(ServerBoundPingPacket packet) {
-        channel.writeAndFlush(ClientBoundPongPacket.INSTANCE);
+        sendPacket(ClientBoundPongPacket.INSTANCE);
     }
 
     @Override
