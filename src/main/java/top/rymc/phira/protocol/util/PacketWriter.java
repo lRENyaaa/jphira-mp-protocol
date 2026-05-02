@@ -25,6 +25,10 @@ public final class PacketWriter {
         NettyPacketUtil.encodeVarInt(buf, value);
     }
 
+    public static void write(ByteBuf buf, long value) {
+        buf.writeLongLE(value);
+    }
+
     public static void write(ByteBuf buf, float value) {
         buf.writeFloatLE(value);
     }
