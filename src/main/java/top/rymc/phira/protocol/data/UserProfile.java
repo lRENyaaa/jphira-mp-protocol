@@ -2,12 +2,9 @@ package top.rymc.phira.protocol.data;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import lombok.Setter;
 import top.rymc.phira.protocol.codec.Encodeable;
 import top.rymc.phira.protocol.util.NettyPacketUtil;
 import top.rymc.phira.protocol.util.PacketWriter;
-
-import java.util.Objects;
 
 @Getter
 public final class UserProfile implements Encodeable {
