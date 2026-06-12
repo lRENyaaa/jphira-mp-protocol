@@ -18,13 +18,18 @@ public class ServerBoundSelectChartPacket extends ServerBoundPacket {
         return new ServerBoundSelectChartPacket(id);
     }
 
+    public static ServerBoundSelectChartPacket create(int id, byte[] trailer) {
+        return create(id).setTrailer(trailer, ServerBoundSelectChartPacket.class);
+    }
+
     public static ServerBoundSelectChartPacket decode(ByteBuf buf) {
-        return new ServerBoundSelectChartPacket(buf.readIntLE());
+        return new ServerBoundSelectChartPacket(buf.readIntLE()).setTrailer(buf, ServerBoundSelectChartPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, id);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

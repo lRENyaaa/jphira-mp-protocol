@@ -18,13 +18,18 @@ public class ServerBoundCycleRoomPacket extends ServerBoundPacket {
         return new ServerBoundCycleRoomPacket(cycle);
     }
 
+    public static ServerBoundCycleRoomPacket create(boolean cycle, byte[] trailer) {
+        return create(cycle).setTrailer(trailer, ServerBoundCycleRoomPacket.class);
+    }
+
     public static ServerBoundCycleRoomPacket decode(ByteBuf buf) {
-        return new ServerBoundCycleRoomPacket(buf.readBoolean());
+        return new ServerBoundCycleRoomPacket(buf.readBoolean()).setTrailer(buf, ServerBoundCycleRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, cycle);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

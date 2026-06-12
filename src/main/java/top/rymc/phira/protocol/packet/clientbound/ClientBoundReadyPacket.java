@@ -26,17 +26,26 @@ public class ClientBoundReadyPacket extends ClientBoundPacket {
         return new ClientBoundReadyPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundReadyPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundReadyPacket.class);
+    }
+
     public static ClientBoundReadyPacket failed(String failedMessage) {
         return new ClientBoundReadyPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundReadyPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundReadyPacket.class);
+    }
+
     public static ClientBoundReadyPacket decode(ByteBuf buf) {
-        return new ClientBoundReadyPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundReadyPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundReadyPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

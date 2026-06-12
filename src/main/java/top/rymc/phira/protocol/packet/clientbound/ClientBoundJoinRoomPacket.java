@@ -44,21 +44,34 @@ public class ClientBoundJoinRoomPacket extends ClientBoundPacket {
         return success(gameState, FullUserProfile.fromLists(users, monitors), isLive);
     }
 
+    public static ClientBoundJoinRoomPacket success(GameState gameState, List<UserProfile> users, List<UserProfile> monitors, boolean isLive, byte[] trailer) {
+        return success(gameState, users, monitors, isLive).setTrailer(trailer, ClientBoundJoinRoomPacket.class);
+    }
+
     public static ClientBoundJoinRoomPacket success(GameState gameState, List<FullUserProfile> users, boolean isLive) {
         return new ClientBoundJoinRoomPacket(PacketResult.success(new Data(gameState, users, isLive)));
+    }
+
+    public static ClientBoundJoinRoomPacket success(GameState gameState, List<FullUserProfile> users, boolean isLive, byte[] trailer) {
+        return success(gameState, users, isLive).setTrailer(trailer, ClientBoundJoinRoomPacket.class);
     }
 
     public static ClientBoundJoinRoomPacket failed(String failedMessage) {
         return new ClientBoundJoinRoomPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundJoinRoomPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundJoinRoomPacket.class);
+    }
+
     public static ClientBoundJoinRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundJoinRoomPacket(PacketResult.decode(buf, Data::decode));
+        return new ClientBoundJoinRoomPacket(PacketResult.decode(buf, Data::decode)).setTrailer(buf, ClientBoundJoinRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

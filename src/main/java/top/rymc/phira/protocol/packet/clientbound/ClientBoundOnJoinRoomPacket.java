@@ -22,17 +22,26 @@ public class ClientBoundOnJoinRoomPacket extends ClientBoundPacket {
         return new ClientBoundOnJoinRoomPacket(userProfile);
     }
 
+    public static ClientBoundOnJoinRoomPacket create(FullUserProfile userProfile, byte[] trailer) {
+        return create(userProfile).setTrailer(trailer, ClientBoundOnJoinRoomPacket.class);
+    }
+
     public static ClientBoundOnJoinRoomPacket create(UserProfile userProfile, boolean isMonitor) {
         return create(new FullUserProfile(userProfile, isMonitor));
     }
 
+    public static ClientBoundOnJoinRoomPacket create(UserProfile userProfile, boolean isMonitor, byte[] trailer) {
+        return create(userProfile, isMonitor).setTrailer(trailer, ClientBoundOnJoinRoomPacket.class);
+    }
+
     public static ClientBoundOnJoinRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundOnJoinRoomPacket(FullUserProfile.decode(buf));
+        return new ClientBoundOnJoinRoomPacket(FullUserProfile.decode(buf)).setTrailer(buf, ClientBoundOnJoinRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, userProfile);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

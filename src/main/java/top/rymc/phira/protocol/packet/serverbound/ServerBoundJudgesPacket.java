@@ -22,13 +22,18 @@ public class ServerBoundJudgesPacket extends ServerBoundPacket {
         return new ServerBoundJudgesPacket(judges);
     }
 
+    public static ServerBoundJudgesPacket create(List<JudgeEvent> judges, byte[] trailer) {
+        return create(judges).setTrailer(trailer, ServerBoundJudgesPacket.class);
+    }
+
     public static ServerBoundJudgesPacket decode(ByteBuf buf) {
-        return new ServerBoundJudgesPacket(NettyPacketUtil.decodeList(buf, JudgeEvent::decode));
+        return new ServerBoundJudgesPacket(NettyPacketUtil.decodeList(buf, JudgeEvent::decode)).setTrailer(buf, ServerBoundJudgesPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, judges);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

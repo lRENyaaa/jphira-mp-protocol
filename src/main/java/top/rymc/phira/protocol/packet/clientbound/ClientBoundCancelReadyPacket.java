@@ -26,17 +26,26 @@ public class ClientBoundCancelReadyPacket extends ClientBoundPacket {
         return new ClientBoundCancelReadyPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundCancelReadyPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundCancelReadyPacket.class);
+    }
+
     public static ClientBoundCancelReadyPacket failed(String failedMessage) {
         return new ClientBoundCancelReadyPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundCancelReadyPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundCancelReadyPacket.class);
+    }
+
     public static ClientBoundCancelReadyPacket decode(ByteBuf buf) {
-        return new ClientBoundCancelReadyPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundCancelReadyPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundCancelReadyPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

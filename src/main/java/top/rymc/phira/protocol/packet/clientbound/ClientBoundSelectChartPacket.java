@@ -26,17 +26,26 @@ public class ClientBoundSelectChartPacket extends ClientBoundPacket {
         return new ClientBoundSelectChartPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundSelectChartPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundSelectChartPacket.class);
+    }
+
     public static ClientBoundSelectChartPacket failed(String failedMessage) {
         return new ClientBoundSelectChartPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundSelectChartPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundSelectChartPacket.class);
+    }
+
     public static ClientBoundSelectChartPacket decode(ByteBuf buf) {
-        return new ClientBoundSelectChartPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundSelectChartPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundSelectChartPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

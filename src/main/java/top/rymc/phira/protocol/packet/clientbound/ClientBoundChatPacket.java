@@ -26,17 +26,26 @@ public class ClientBoundChatPacket extends ClientBoundPacket {
         return new ClientBoundChatPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundChatPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundChatPacket.class);
+    }
+
     public static ClientBoundChatPacket failed(String failedMessage) {
         return new ClientBoundChatPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundChatPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundChatPacket.class);
+    }
+
     public static ClientBoundChatPacket decode(ByteBuf buf) {
-        return new ClientBoundChatPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundChatPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundChatPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

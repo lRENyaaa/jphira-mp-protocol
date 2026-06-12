@@ -18,17 +18,26 @@ public class ClientBoundLeaveRoomPacket extends ClientBoundPacket {
         return new ClientBoundLeaveRoomPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundLeaveRoomPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundLeaveRoomPacket.class);
+    }
+
     public static ClientBoundLeaveRoomPacket failed(String failedMessage) {
         return new ClientBoundLeaveRoomPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundLeaveRoomPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundLeaveRoomPacket.class);
+    }
+
     public static ClientBoundLeaveRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundLeaveRoomPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundLeaveRoomPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundLeaveRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

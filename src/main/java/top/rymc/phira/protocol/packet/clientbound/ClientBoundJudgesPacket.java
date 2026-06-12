@@ -23,17 +23,22 @@ public class ClientBoundJudgesPacket extends ClientBoundPacket {
         return new ClientBoundJudgesPacket(id, judges);
     }
 
+    public static ClientBoundJudgesPacket create(int id, List<JudgeEvent> judges, byte[] trailer) {
+        return create(id, judges).setTrailer(trailer, ClientBoundJudgesPacket.class);
+    }
+
     public static ClientBoundJudgesPacket decode(ByteBuf buf) {
         return new ClientBoundJudgesPacket(
                 buf.readIntLE(),
                 NettyPacketUtil.decodeList(buf, JudgeEvent::decode)
-        );
+        ).setTrailer(buf, ClientBoundJudgesPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, id);
         PacketWriter.write(buf, judges);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

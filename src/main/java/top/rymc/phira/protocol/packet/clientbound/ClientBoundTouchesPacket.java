@@ -23,17 +23,22 @@ public class ClientBoundTouchesPacket extends ClientBoundPacket {
         return new ClientBoundTouchesPacket(id, frames);
     }
 
+    public static ClientBoundTouchesPacket create(int id, List<TouchFrame> frames, byte[] trailer) {
+        return create(id, frames).setTrailer(trailer, ClientBoundTouchesPacket.class);
+    }
+
     public static ClientBoundTouchesPacket decode(ByteBuf buf) {
         return new ClientBoundTouchesPacket(
                 buf.readIntLE(),
                 NettyPacketUtil.decodeList(buf, TouchFrame::decode)
-        );
+        ).setTrailer(buf, ClientBoundTouchesPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, id);
         PacketWriter.write(buf, frames);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

@@ -20,17 +20,22 @@ public class ServerBoundJoinRoomPacket extends ServerBoundPacket {
         return new ServerBoundJoinRoomPacket(roomId, monitor);
     }
 
+    public static ServerBoundJoinRoomPacket create(String roomId, boolean monitor, byte[] trailer) {
+        return create(roomId, monitor).setTrailer(trailer, ServerBoundJoinRoomPacket.class);
+    }
+
     public static ServerBoundJoinRoomPacket decode(ByteBuf buf) {
         return new ServerBoundJoinRoomPacket(
                 NettyPacketUtil.decodeString(buf, 20),
                 buf.readBoolean()
-        );
+        ).setTrailer(buf, ServerBoundJoinRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, roomId);
         PacketWriter.write(buf, monitor);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

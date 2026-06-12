@@ -26,17 +26,26 @@ public class ClientBoundRequestStartPacket extends ClientBoundPacket {
         return new ClientBoundRequestStartPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundRequestStartPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundRequestStartPacket.class);
+    }
+
     public static ClientBoundRequestStartPacket failed(String failedMessage) {
         return new ClientBoundRequestStartPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundRequestStartPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundRequestStartPacket.class);
+    }
+
     public static ClientBoundRequestStartPacket decode(ByteBuf buf) {
-        return new ClientBoundRequestStartPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundRequestStartPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundRequestStartPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

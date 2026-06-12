@@ -33,24 +33,37 @@ public class ClientBoundAuthenticatePacket extends ClientBoundPacket {
     }
 
     public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile) {
-        return success(userProfile, null);
+        return success(userProfile, (RoomInfo) null);
+    }
+
+    public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile, byte[] trailer) {
+        return success(userProfile).setTrailer(trailer, ClientBoundAuthenticatePacket.class);
     }
 
     public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile, RoomInfo roomInfo) {
         return new ClientBoundAuthenticatePacket(PacketResult.success(new Data(userProfile, roomInfo)));
     }
 
+    public static ClientBoundAuthenticatePacket success(FullUserProfile userProfile, RoomInfo roomInfo, byte[] trailer) {
+        return success(userProfile, roomInfo).setTrailer(trailer, ClientBoundAuthenticatePacket.class);
+    }
+
     public static ClientBoundAuthenticatePacket failed(String failedMessage) {
         return new ClientBoundAuthenticatePacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundAuthenticatePacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundAuthenticatePacket.class);
+    }
+
     public static ClientBoundAuthenticatePacket decode(ByteBuf buf) {
-        return new ClientBoundAuthenticatePacket(PacketResult.decode(buf, Data::decode));
+        return new ClientBoundAuthenticatePacket(PacketResult.decode(buf, Data::decode)).setTrailer(buf, ClientBoundAuthenticatePacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

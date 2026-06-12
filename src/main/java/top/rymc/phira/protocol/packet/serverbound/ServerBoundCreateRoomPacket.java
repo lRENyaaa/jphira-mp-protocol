@@ -19,13 +19,18 @@ public class ServerBoundCreateRoomPacket extends ServerBoundPacket {
         return new ServerBoundCreateRoomPacket(roomId);
     }
 
+    public static ServerBoundCreateRoomPacket create(String roomId, byte[] trailer) {
+        return create(roomId).setTrailer(trailer, ServerBoundCreateRoomPacket.class);
+    }
+
     public static ServerBoundCreateRoomPacket decode(ByteBuf buf) {
-        return new ServerBoundCreateRoomPacket(NettyPacketUtil.decodeString(buf, 20));
+        return new ServerBoundCreateRoomPacket(NettyPacketUtil.decodeString(buf, 20)).setTrailer(buf, ServerBoundCreateRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, roomId);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

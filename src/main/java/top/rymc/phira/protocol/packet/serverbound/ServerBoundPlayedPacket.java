@@ -18,13 +18,18 @@ public class ServerBoundPlayedPacket extends ServerBoundPacket {
         return new ServerBoundPlayedPacket(id);
     }
 
+    public static ServerBoundPlayedPacket create(int id, byte[] trailer) {
+        return create(id).setTrailer(trailer, ServerBoundPlayedPacket.class);
+    }
+
     public static ServerBoundPlayedPacket decode(ByteBuf buf) {
-        return new ServerBoundPlayedPacket(buf.readIntLE());
+        return new ServerBoundPlayedPacket(buf.readIntLE()).setTrailer(buf, ServerBoundPlayedPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, id);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

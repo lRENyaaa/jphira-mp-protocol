@@ -18,13 +18,18 @@ public class ServerBoundLockRoomPacket extends ServerBoundPacket {
         return new ServerBoundLockRoomPacket(lock);
     }
 
+    public static ServerBoundLockRoomPacket create(boolean lock, byte[] trailer) {
+        return create(lock).setTrailer(trailer, ServerBoundLockRoomPacket.class);
+    }
+
     public static ServerBoundLockRoomPacket decode(ByteBuf buf) {
-        return new ServerBoundLockRoomPacket(buf.readBoolean());
+        return new ServerBoundLockRoomPacket(buf.readBoolean()).setTrailer(buf, ServerBoundLockRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, lock);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

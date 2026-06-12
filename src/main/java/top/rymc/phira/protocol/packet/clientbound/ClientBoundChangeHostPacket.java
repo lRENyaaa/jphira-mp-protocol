@@ -18,13 +18,18 @@ public class ClientBoundChangeHostPacket extends ClientBoundPacket {
         return new ClientBoundChangeHostPacket(isHost);
     }
 
+    public static ClientBoundChangeHostPacket create(boolean isHost, byte[] trailer) {
+        return create(isHost).setTrailer(trailer, ClientBoundChangeHostPacket.class);
+    }
+
     public static ClientBoundChangeHostPacket decode(ByteBuf buf) {
-        return new ClientBoundChangeHostPacket(buf.readBoolean());
+        return new ClientBoundChangeHostPacket(buf.readBoolean()).setTrailer(buf, ClientBoundChangeHostPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, host);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

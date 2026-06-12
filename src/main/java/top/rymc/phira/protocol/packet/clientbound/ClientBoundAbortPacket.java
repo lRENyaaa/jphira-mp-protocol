@@ -27,17 +27,26 @@ public class ClientBoundAbortPacket extends ClientBoundPacket {
         return new ClientBoundAbortPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundAbortPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundAbortPacket.class);
+    }
+
     public static ClientBoundAbortPacket failed(String failedMessage) {
         return new ClientBoundAbortPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundAbortPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundAbortPacket.class);
+    }
+
     public static ClientBoundAbortPacket decode(ByteBuf buf) {
-        return new ClientBoundAbortPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundAbortPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundAbortPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

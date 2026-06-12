@@ -1,20 +1,34 @@
 package top.rymc.phira.protocol.packet.serverbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import top.rymc.phira.protocol.codec.Singletonizable;
 import top.rymc.phira.protocol.handler.server.ServerBoundPacketHandler;
 import top.rymc.phira.protocol.packet.ServerBoundPacket;
+import top.rymc.phira.protocol.util.PacketWriter;
 
-public class ServerBoundLeaveRoomPacket extends ServerBoundPacket {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerBoundLeaveRoomPacket extends ServerBoundPacket implements Singletonizable {
 
-    public static ServerBoundLeaveRoomPacket INSTANCE = new ServerBoundLeaveRoomPacket();
+    public static final ServerBoundLeaveRoomPacket INSTANCE = new ServerBoundLeaveRoomPacket();
 
-    private ServerBoundLeaveRoomPacket() {
-        // Singleton instance
+    @Override
+    public boolean isSingleton() {
+        return this == INSTANCE;
+    }
+
+    public static ServerBoundLeaveRoomPacket create(byte[] trailer) {
+        return new ServerBoundLeaveRoomPacket().setTrailer(trailer, ServerBoundLeaveRoomPacket.class);
+    }
+
+    public static ServerBoundLeaveRoomPacket decode(ByteBuf buf) {
+        return buf.isReadable() ? new ServerBoundLeaveRoomPacket().setTrailer(buf, ServerBoundLeaveRoomPacket.class) : INSTANCE;
     }
 
     @Override
     public void encode(ByteBuf buf) {
-        // Do nothing here
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

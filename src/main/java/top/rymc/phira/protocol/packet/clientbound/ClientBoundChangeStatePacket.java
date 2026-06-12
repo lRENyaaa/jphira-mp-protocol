@@ -19,13 +19,18 @@ public class ClientBoundChangeStatePacket extends ClientBoundPacket {
         return new ClientBoundChangeStatePacket(gameState);
     }
 
+    public static ClientBoundChangeStatePacket create(GameState gameState, byte[] trailer) {
+        return create(gameState).setTrailer(trailer, ClientBoundChangeStatePacket.class);
+    }
+
     public static ClientBoundChangeStatePacket decode(ByteBuf buf) {
-        return new ClientBoundChangeStatePacket(GameState.decode(buf));
+        return new ClientBoundChangeStatePacket(GameState.decode(buf)).setTrailer(buf, ClientBoundChangeStatePacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, gameState);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

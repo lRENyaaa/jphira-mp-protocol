@@ -26,17 +26,26 @@ public class ClientBoundPlayedPacket extends ClientBoundPacket {
         return new ClientBoundPlayedPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundPlayedPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundPlayedPacket.class);
+    }
+
     public static ClientBoundPlayedPacket failed(String failedMessage) {
         return new ClientBoundPlayedPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundPlayedPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundPlayedPacket.class);
+    }
+
     public static ClientBoundPlayedPacket decode(ByteBuf buf) {
-        return new ClientBoundPlayedPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundPlayedPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundPlayedPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

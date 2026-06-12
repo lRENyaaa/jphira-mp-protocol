@@ -19,13 +19,18 @@ public class ServerBoundChatPacket extends ServerBoundPacket {
         return new ServerBoundChatPacket(message);
     }
 
+    public static ServerBoundChatPacket create(String message, byte[] trailer) {
+        return create(message).setTrailer(trailer, ServerBoundChatPacket.class);
+    }
+
     public static ServerBoundChatPacket decode(ByteBuf buf) {
-        return new ServerBoundChatPacket(NettyPacketUtil.decodeString(buf, 200));
+        return new ServerBoundChatPacket(NettyPacketUtil.decodeString(buf, 200)).setTrailer(buf, ServerBoundChatPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, message);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

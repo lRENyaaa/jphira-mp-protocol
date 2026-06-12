@@ -19,13 +19,18 @@ public class ClientBoundMessagePacket extends ClientBoundPacket {
         return new ClientBoundMessagePacket(message);
     }
 
+    public static ClientBoundMessagePacket create(Message message, byte[] trailer) {
+        return create(message).setTrailer(trailer, ClientBoundMessagePacket.class);
+    }
+
     public static ClientBoundMessagePacket decode(ByteBuf buf) {
-        return new ClientBoundMessagePacket(Message.decode(buf));
+        return new ClientBoundMessagePacket(Message.decode(buf)).setTrailer(buf, ClientBoundMessagePacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, message);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

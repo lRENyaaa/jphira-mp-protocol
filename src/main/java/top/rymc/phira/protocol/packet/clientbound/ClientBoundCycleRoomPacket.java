@@ -26,17 +26,26 @@ public class ClientBoundCycleRoomPacket extends ClientBoundPacket {
         return new ClientBoundCycleRoomPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundCycleRoomPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundCycleRoomPacket.class);
+    }
+
     public static ClientBoundCycleRoomPacket failed(String failedMessage) {
         return new ClientBoundCycleRoomPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundCycleRoomPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundCycleRoomPacket.class);
+    }
+
     public static ClientBoundCycleRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundCycleRoomPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundCycleRoomPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundCycleRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

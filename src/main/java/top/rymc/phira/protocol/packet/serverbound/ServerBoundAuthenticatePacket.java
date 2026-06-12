@@ -19,13 +19,18 @@ public class ServerBoundAuthenticatePacket extends ServerBoundPacket {
         return new ServerBoundAuthenticatePacket(token);
     }
 
+    public static ServerBoundAuthenticatePacket create(String token, byte[] trailer) {
+        return create(token).setTrailer(trailer, ServerBoundAuthenticatePacket.class);
+    }
+
     public static ServerBoundAuthenticatePacket decode(ByteBuf buf) {
-        return new ServerBoundAuthenticatePacket(NettyPacketUtil.decodeString(buf, 32));
+        return new ServerBoundAuthenticatePacket(NettyPacketUtil.decodeString(buf, 32)).setTrailer(buf, ServerBoundAuthenticatePacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, token);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override

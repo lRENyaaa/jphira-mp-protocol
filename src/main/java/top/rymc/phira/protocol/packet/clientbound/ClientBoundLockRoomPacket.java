@@ -26,17 +26,26 @@ public class ClientBoundLockRoomPacket extends ClientBoundPacket {
         return new ClientBoundLockRoomPacket(PacketResult.successVoid());
     }
 
+    public static ClientBoundLockRoomPacket success(byte[] trailer) {
+        return success().setTrailer(trailer, ClientBoundLockRoomPacket.class);
+    }
+
     public static ClientBoundLockRoomPacket failed(String failedMessage) {
         return new ClientBoundLockRoomPacket(PacketResult.failed(failedMessage));
     }
 
+    public static ClientBoundLockRoomPacket failed(String failedMessage, byte[] trailer) {
+        return failed(failedMessage).setTrailer(trailer, ClientBoundLockRoomPacket.class);
+    }
+
     public static ClientBoundLockRoomPacket decode(ByteBuf buf) {
-        return new ClientBoundLockRoomPacket(PacketResult.decodeVoid(buf));
+        return new ClientBoundLockRoomPacket(PacketResult.decodeVoid(buf)).setTrailer(buf, ClientBoundLockRoomPacket.class);
     }
 
     @Override
     public void encode(ByteBuf buf) {
         PacketWriter.write(buf, result);
+        PacketWriter.write(buf, trailer);
     }
 
     @Override
