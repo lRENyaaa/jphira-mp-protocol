@@ -117,7 +117,7 @@ public final class NettyPacketUtil {
 
     public static <T extends Encodeable> List<T> decodeList(ByteBuf buf, Function<ByteBuf, T> decoder) {
         int length = decodeVarInt(buf);
-        List<T> list = new ArrayList<>(length);
+        List<T> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             list.add(decoder.apply(buf));
         }
